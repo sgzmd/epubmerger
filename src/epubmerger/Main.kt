@@ -34,11 +34,16 @@ fun main(args: Array<String>) {
     var coverPageSet = false
 
     for (epub in epubs) {
+
         if (!coverPageSet) {
             if (epub.coverImage != null && epub.coverPage != null) {
                 book.coverImage = Resource(epub.coverImage.data, epub.coverImage.mediaType)
-                book.coverPage = Resource(epub.coverPage.data, epub.coverPage.mediaType)
-                coverPageSet = true
+
+                val reprocessed = reprocessResource(epub.coverPage, epub.coverImage.href, book.coverImage.href)
+                if (reprocessed != null) {
+                    book.coverPage = Resource(reprocessed, epub.coverPage.mediaType)
+                    coverPageSet = true
+                }
             }
         }
         val sectionsMap = epub.spine.spineReferences.map {
@@ -55,6 +60,10 @@ fun main(args: Array<String>) {
         }
 
         for (spineItem in epub.spine.spineReferences) {
+            if (spineItem.resource.href == epub.coverPage.href) {
+                continue
+            }
+
             val resource = Resource(spineItem.resource.data, spineItem.resource.mediaType)
             val spr = SpineReference(resource)
             book.resources.add(resource)
@@ -79,3 +88,17 @@ fun copyToReference(copyFrom: TOCReference, copyTo: TOCReference) {
         }
     }
 }
+
+fun reprocessResource(res: Resource, originalHref: String, newHref: String): ByteArray? {
+    if (isXHTML(res.mediaType.name)) {
+        val xhtml = String(res.data)
+        val newXhtml = xhtml.split(originalHref).joinToString(newHref)
+        return newXhtml.toByteArray()
+    } else {
+        return null
+    }
+}
+
+fun isXHTML(mediaType: String) = mediaType.toLowerCase().contains("xhtml")
+        || mediaType.toLowerCase().contains("xml")
+        || mediaType.toLowerCase().contains("xml")

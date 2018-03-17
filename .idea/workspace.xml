@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7d266a36-d3bd-44e6-80e8-64682f854b1e" name="Default" comment="" />
+    <list default="true" id="7d266a36-d3bd-44e6-80e8-64682f854b1e" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/epubmerger/Main.kt" afterPath="$PROJECT_DIR$/src/epubmerger/Main.kt" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,8 +18,8 @@
       <file leaf-file-name="Main.kt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/epubmerger/Main.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="40" column="35" lean-forward="false" selection-start-line="40" selection-start-column="35" selection-end-line="40" selection-end-column="35" />
+            <state relative-caret-position="610">
+              <caret line="53" column="60" lean-forward="false" selection-start-line="53" selection-start-column="60" selection-end-line="53" selection-end-column="60" />
               <folding>
                 <element signature="e#20#365#0" expanded="true" />
               </folding>
@@ -27,7 +30,7 @@
       <file leaf-file-name="Resource.java" pinned="false" current-in-tab="false">
         <entry file="jar://$PROJECT_DIR$/lib/psiegman-epublib-5873b1f.zip!/psiegman-epublib-5873b1f/epublib-core/src/main/java/nl/siegmann/epublib/domain/Resource.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
+            <state relative-caret-position="918">
               <caret line="65" column="63" lean-forward="false" selection-start-line="65" selection-start-column="63" selection-end-line="65" selection-end-column="63" />
               <folding />
             </state>
@@ -43,6 +46,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
       <projects_view />
@@ -56,6 +62,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/jshell/jshell_console.snippet" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/ide/ide-scripting.kts" />
         <option value="$PROJECT_DIR$/src/epubmerger/Main.kt" />
       </list>
     </option>
@@ -66,6 +74,7 @@
     <option name="width" value="1400" />
     <option name="height" value="1000" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -82,7 +91,6 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -110,6 +118,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -178,13 +187,13 @@
     </configuration>
     <configuration name="epubmerger.MainKt" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" value="epubmerger.MainKt" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="data/1.epub data/2.epub data/3.epub" />
-      <option name="WORKING_DIRECTORY" value="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="epubmerger.MainKt" />
+      <option name="WORKING_DIRECTORY" value="" />
       <module name="epubmerger" />
       <envs />
     </configuration>
@@ -252,17 +261,17 @@
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32910156" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28432328" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2841797" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18229167" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39824733" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39746094" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -283,10 +292,10 @@
           <url>file://$PROJECT_DIR$/src/epubmerger/Main.kt</url>
           <line>38</line>
           <properties />
-          <option name="timeStamp" value="3" />
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="4" />
+      <option name="time" value="5" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="JetRunConfigurationType">
@@ -294,7 +303,74 @@
       </configuration>
     </watches-manager>
   </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>String(book.coverPage.data)
+book.coverImage</expression-string>
+        <language-id>kotlin</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>String(book.coverPage.data)
+book.coverImage.href</expression-string>
+        <language-id>kotlin</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>String(book.coverPage.data)</expression-string>
+        <language-id>kotlin</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>epub.resources.allHrefs</expression-string>
+        <language-id>kotlin</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>epub.resources.allHrefs()</expression-string>
+        <language-id>kotlin</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/epubmerger/Main.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#365#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/psiegman-epublib-5873b1f.zip!/psiegman-epublib-5873b1f/epublib-core/src/main/java/nl/siegmann/epublib/domain/Resource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1170">
+          <caret line="65" column="63" lean-forward="false" selection-start-line="65" selection-start-column="63" selection-end-line="65" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/epubmerger/Main.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#365#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/psiegman-epublib-5873b1f.zip!/psiegman-epublib-5873b1f/epublib-core/src/main/java/nl/siegmann/epublib/domain/Resource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1170">
+          <caret line="65" column="63" lean-forward="false" selection-start-line="65" selection-start-column="63" selection-end-line="65" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/epubmerger/Main.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="774">
@@ -319,10 +395,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5580">
           <caret line="310" column="7" lean-forward="false" selection-start-line="310" selection-start-column="7" selection-end-line="310" selection-end-column="7" />
-          <folding>
-            <element signature="e#21326#21327#0" expanded="false" />
-            <element signature="e#21363#21364#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -375,7 +447,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
           <caret line="46" column="24" lean-forward="false" selection-start-line="46" selection-start-column="24" selection-end-line="46" selection-end-column="24" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -383,7 +454,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
           <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -391,7 +461,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="26" column="33" lean-forward="true" selection-start-line="26" selection-start-column="33" selection-end-line="26" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -399,57 +468,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1170">
           <caret line="88" column="18" lean-forward="false" selection-start-line="88" selection-start-column="18" selection-end-line="88" selection-end-column="18" />
-          <folding>
-            <marker date="1521198073000" expanded="false" signature="0:104" ph="/.../" />
-            <marker date="1521198073000" expanded="false" signature="150:484" ph="..." />
-            <marker date="1521198073000" expanded="false" signature="841:852" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="933:939" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="994:1005" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="1055:1061" ph=" }" />
-            <marker date="1521198073000" expanded="true" signature="1109:1208" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="1273:1399" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="1469:1577" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="1657:1714" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="1816:2049" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="2110:2174" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="2223:2256" ph="{...}" />
-            <marker date="1521198073000" expanded="true" signature="2282:2289" ph="{}" />
-            <marker date="1521198073000" expanded="false" signature="2327:2338" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2355:2361" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2388:2399" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2429:2435" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2465:2476" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2494:2500" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2534:2545" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2558:2564" ph=" }" />
-            <marker date="1521198073000" expanded="true" signature="2591:2602" ph=" { " />
-            <marker date="1521198073000" expanded="true" signature="2617:2623" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2652:2663" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2680:2686" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2724:2735" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2752:2758" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2796:2807" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2833:2839" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="2890:2901" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="2931:2937" ph=" }" />
-            <marker date="1521198073000" expanded="true" signature="2988:3098" ph="{...}" />
-            <marker date="1521198073000" expanded="false" signature="3125:3136" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="3164:3170" ph=" }" />
-            <marker date="1521198073000" expanded="true" signature="3221:3347" ph="{...}" />
-            <marker date="1521198073000" expanded="false" signature="3384:3395" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="3417:3423" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="3474:3485" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="3512:3518" ph=" }" />
-            <marker date="1521198073000" expanded="false" signature="3558:3569" ph=" { " />
-            <marker date="1521198073000" expanded="false" signature="3588:3594" ph=" }" />
-            <marker date="1521198073000" expanded="true" signature="3625:3848" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/psiegman-epublib-5873b1f.zip!/psiegman-epublib-5873b1f/epublib-core/src/main/java/nl/siegmann/epublib/domain/Resource.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
+        <state relative-caret-position="918">
           <caret line="65" column="63" lean-forward="false" selection-start-line="65" selection-start-column="63" selection-end-line="65" selection-end-column="63" />
           <folding />
         </state>
@@ -459,10 +483,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="253">
           <caret line="370" column="27" lean-forward="true" selection-start-line="370" selection-start-column="27" selection-end-line="370" selection-end-column="27" />
-          <folding>
-            <element signature="e#21326#21327#0" expanded="false" />
-            <element signature="e#21363#21364#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -470,14 +490,29 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
           <caret line="165" column="0" lean-forward="false" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/jshell/jshell_console.snippet">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/ide/ide-scripting.kts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/epubmerger/Main.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="40" column="35" lean-forward="false" selection-start-line="40" selection-start-column="35" selection-end-line="40" selection-end-column="35" />
+        <state relative-caret-position="610">
+          <caret line="53" column="60" lean-forward="false" selection-start-line="53" selection-start-column="60" selection-end-line="53" selection-end-column="60" />
           <folding>
             <element signature="e#20#365#0" expanded="true" />
           </folding>
