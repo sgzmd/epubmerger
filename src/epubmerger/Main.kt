@@ -8,6 +8,10 @@ import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
 import org.apache.commons.lang.builder.ToStringBuilder as tsb
 import java.io.File
+import java.nio.file.DirectoryStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * We will be processing books in the following order:
@@ -24,7 +28,9 @@ import java.io.File
 
 fun main(args: Array<String>) {
     val book = Book()
-    val epubs = args.map { EpubReader().readEpub(File(it).inputStream()) }
+
+    val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
+    val epubs = stream.map { EpubReader().readEpub(it.toFile().inputStream()) }
     val title = epubs.map { it.title }
     println(title)
 
