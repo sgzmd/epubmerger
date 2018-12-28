@@ -144,7 +144,7 @@
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
     <property name="SearchEverywhereHistoryKey" value="SpineRefe&#9;PSI&#9;JAVA://nl.siegmann.epublib.domain.SpineReference" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1546029705078" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1546029710203" />
     <property name="last.edited.regexp" value="&lt;link rel=&quot;stylesheet&quot; href=&quot;href_0_7.css&quot; type=&quot;text/css&quot;/&gt;" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="SDKs" />
