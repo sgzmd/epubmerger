@@ -27,84 +27,100 @@ import java.nio.file.Paths
  */
 
 fun main(args: Array<String>) {
-    val book = Book()
+  val book = Book()
 
-    val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
-    val epubs = stream.map { EpubReader().readEpub(it.toFile().inputStream()) }
-    val title = epubs.map { it.title }
-    println(title)
+  val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
+  val epubs = stream.map { EpubReader().readEpub(it.toFile().inputStream()) }
+  val title = epubs.map { it.title }
+  println(title)
 
-    book.metadata.titles = title
-    book.metadata.authors = epubs[0].metadata.authors
+  book.metadata.titles = title
+  book.metadata.authors = epubs[0].metadata.authors
 
-    var coverPageSet = false
+  var coverPageSet = false
 
-    for (epub in epubs) {
+  var index = 0
+  for (epub in epubs) {
 
-        if (!coverPageSet) {
-            if (epub.coverImage != null && epub.coverPage != null) {
-                book.coverImage = Resource(epub.coverImage.data, epub.coverImage.mediaType)
+    if (!coverPageSet) {
+      if (epub.coverImage != null && epub.coverPage != null) {
+        book.coverImage = Resource(epub.coverImage.data, epub.coverImage.mediaType)
 
-                val reprocessed = reprocessResource(epub.coverPage, epub.coverImage.href, book.coverImage.href)
-                if (reprocessed != null) {
-                    book.coverPage = Resource(reprocessed, epub.coverPage.mediaType)
-                    coverPageSet = true
-                }
-            }
+        val reprocessed = reprocessResource(epub.coverPage, epub.coverImage.href, book.coverImage.href)
+        if (reprocessed != null) {
+          book.coverPage = Resource(reprocessed, epub.coverPage.mediaType)
+          coverPageSet = true
         }
-        val sectionsMap = epub.spine.spineReferences.map {
-            it.resource.href to String(it.resource.data)
-        }.toMap()
+      }
+    }
+    val sectionsMap = epub.spine.spineReferences.map {
+      it.resource.href to String(it.resource.data)
+    }.toMap()
 
-        if (epub.tableOfContents.size() > 0) {
-            val tocrefs = epub.tableOfContents.tocReferences
-            for (tr in tocrefs) {
-                val tc = TOCReference()
-                copyToReference(tr, tc)
-                book.tableOfContents.addTOCReference(tc)
-            }
-        }
-
-        for (spineItem in epub.spine.spineReferences) {
-            if (spineItem.resource.href == epub.coverPage.href) {
-                continue
-            }
-
-            val resource = Resource(spineItem.resource.data, spineItem.resource.mediaType)
-            val spr = SpineReference(resource)
-            book.resources.add(resource)
-            book.spine.addSpineReference(spr)
-        }
+    if (epub.tableOfContents.size() > 0) {
+      val tocrefs = epub.tableOfContents.tocReferences
+      for (tr in tocrefs) {
+        val tc = TOCReference()
+        copyToReference(tr, tc)
+        book.tableOfContents.addTOCReference(tc)
+      }
     }
 
-    EpubWriter().write(book, File("result.epub").outputStream())
+    for (spineItem in epub.spine.spineReferences) {
+      if (spineItem.resource.href == epub.coverPage.href) {
+        continue
+      }
+
+      val href = spineItem.resource.href
+//            val hrefPath = Paths.get(href)
+//            val newHref = Paths.get( "${index}_${hrefPath.fileName}")
+//            val newId = "${index}_${spineItem.resource.id}"
+      val (newHref, newId) = makeNewHrefAndId(index, href, spineItem.resource.id)
+      val resource = Resource(newId, spineItem.resource.data, newHref.toString(), spineItem.resource.mediaType)
+      val spr = SpineReference(resource)
+
+      book.resources.add(resource)
+      book.spine.addSpineReference(spr)
+    }
+    ++index
+  }
+
+  EpubWriter().write(book, File("result.epub").outputStream())
+}
+
+fun makeNewHrefAndId(index: Int, href: String, id: String): Pair<String, String> {
+  val hrefPath = Paths.get(href)
+  val newHref = Paths.get( "${index}_${hrefPath.fileName}")
+  val newId = "${index}_${id}"
+
+  return Pair(newHref.toString(), newId)
 }
 
 fun copyToReference(copyFrom: TOCReference, copyTo: TOCReference) {
-    copyTo.title = copyFrom.title
-    if (copyFrom.resource != null) {
-        copyTo.resource = copyFrom.resource
-    }
+  copyTo.title = copyFrom.title
+  if (copyFrom.resource != null) {
+    copyTo.resource = copyFrom.resource
+  }
 
-    if (copyFrom.children != null) {
-        for (c in copyFrom.children) {
-            val tr = TOCReference()
-            copyToReference(c, tr)
-            copyTo.addChildSection(tr)
-        }
+  if (copyFrom.children != null) {
+    for (c in copyFrom.children) {
+      val tr = TOCReference()
+      copyToReference(c, tr)
+      copyTo.addChildSection(tr)
     }
+  }
 }
 
 fun reprocessResource(res: Resource, originalHref: String, newHref: String): ByteArray? {
-    if (isXHTML(res.mediaType.name)) {
-        val xhtml = String(res.data)
-        val newXhtml = xhtml.split(originalHref).joinToString(newHref)
-        return newXhtml.toByteArray()
-    } else {
-        return null
-    }
+  if (isXHTML(res.mediaType.name)) {
+    val xhtml = String(res.data)
+    val newXhtml = xhtml.split(originalHref).joinToString(newHref)
+    return newXhtml.toByteArray()
+  } else {
+    return null
+  }
 }
 
 fun isXHTML(mediaType: String) = mediaType.toLowerCase().contains("xhtml")
-        || mediaType.toLowerCase().contains("xml")
-        || mediaType.toLowerCase().contains("xml")
+    || mediaType.toLowerCase().contains("xml")
+    || mediaType.toLowerCase().contains("xml")
