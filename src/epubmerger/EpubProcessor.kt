@@ -5,6 +5,7 @@ import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.SpineReference
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
+import org.slf4j.LoggerFactory
 import java.nio.charset.Charset
 import java.nio.file.Path
 
@@ -12,6 +13,8 @@ import java.nio.file.Path
  * Joins multiple EPub files into a single file.
  */
 class EpubProcessor(files: List<Path>) {
+
+  private val LOG = LoggerFactory.getLogger(EpubProcessor.javaClass)
 
   private var files: List<Path> = files
   internal var book = Book()
@@ -109,6 +112,7 @@ class EpubProcessor(files: List<Path>) {
 
   internal fun readFiles(): List<Book> {
     return this.files.map {
+      LOG.info("Loading file $it")
       EpubReader().readEpub(it.toFile().inputStream())
     }
   }
