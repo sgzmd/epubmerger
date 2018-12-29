@@ -25,6 +25,12 @@ class EpubProcessor(files: List<Path>) {
     }
   }
 
+  internal fun reprocessAllResources(epub: Book) {
+    epub.resources.all.forEach {
+
+    }
+  }
+
   internal fun buildCoverPage(epub: Book) {
     if (epub.coverImage != null && epub.coverPage != null) {
       book.coverImage = Resource(epub.coverImage.data, epub.coverImage.mediaType)
