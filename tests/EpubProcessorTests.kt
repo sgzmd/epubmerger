@@ -20,7 +20,6 @@ class EpubProcessorTest {
         val fis = Paths.get("./testdata/chekov.epub").toFile().inputStream()
         book = EpubReader().readEpub(fis)
         sut = EpubProcessor(emptyList())
-
     }
 
     @Test
@@ -40,7 +39,7 @@ class EpubProcessorTest {
         sut.hrefIdMap = sut.calculateResourceNames(listOf(book))
 
         // very small chapter, but contains reference to style.css
-        val ch2 = book.resources.getByHref("ch2.xhtml")
+        val ch2 = book.resources.getByHref("OPS/ch2.xhtml")
         val result = sut.reprocessResourceData(ch2.data, "application/xhtml+xml")
 
 //        The text should be in this form:
