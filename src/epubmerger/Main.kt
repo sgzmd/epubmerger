@@ -25,6 +25,15 @@ import java.nio.file.Paths
  * </ul>
  */
 
+fun main4(args: Array<String>) {
+  val epub = EpubReader().readEpub(
+      File("data/Zlotnikov_Berserki_2_Boycy-s-okrainy-Galaktiki.173829.fb2.epub").inputStream(),
+      Charsets.UTF_8.toString())
+
+  print(epub.toString())
+}
+
+
 fun main(args: Array<String>) {
   val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
   val ep = EpubProcessor(stream.toList())
