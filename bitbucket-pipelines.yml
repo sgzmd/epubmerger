@@ -1,0 +1,6 @@
+image: maven:3.3.9
+pipelines:
+  default:
+    - step:
+        script:
+          - mvn -B verify    # -B batch mode makes Maven less verbose
