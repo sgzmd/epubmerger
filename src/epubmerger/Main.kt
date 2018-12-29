@@ -26,6 +26,13 @@ import java.nio.file.Paths
  */
 
 fun main(args: Array<String>) {
+  val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
+  val ep = EpubProcessor(stream.toList())
+  ep.mergeFiles()
+  ep.writeBook(Paths.get("./result.epub"))
+}
+
+fun main2(args: Array<String>) {
   val book = Book()
 
   val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])

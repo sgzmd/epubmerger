@@ -2,7 +2,9 @@ package epubmerger
 
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.Resource
+import nl.siegmann.epublib.domain.SpineReference
 import nl.siegmann.epublib.epub.EpubReader
+import nl.siegmann.epublib.epub.EpubWriter
 import java.nio.charset.Charset
 import java.nio.file.Path
 
@@ -27,6 +29,12 @@ class EpubProcessor(files: List<Path>) {
         break
       }
     }
+
+    buildSpine(epubs)
+  }
+
+  fun writeBook(path: Path) {
+    EpubWriter().write(book, path.toFile().outputStream())
   }
 
   internal fun calculateResourceNames(epubs: List<Book>): HashMap<String, Pair<String, String>> {
@@ -61,7 +69,9 @@ class EpubProcessor(files: List<Path>) {
   internal fun buildSpine(epubs: List<Book>) {
     for (epub in epubs) {
       for (si in epub.spine.spineReferences) {
-
+        val href = si.resource.href
+        val newHref = hrefIdMap[href]?.first
+        book.spine.addSpineReference(SpineReference(book.resources.getByHref(newHref)))
       }
     }
   }

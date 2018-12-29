@@ -28,9 +28,16 @@ class EpubProcessorTest {
         sut.hrefIdMap = map
         sut.reprocessResources(listOf(book))
         map.forEach { oldHref, hrefIdPair ->
-//            assertTrue(book.resources.containsByHref(oldHref))
             assertTrue(sut.book.resources.containsByHref(hrefIdPair.first))
             assertTrue(sut.book.resources.containsId(hrefIdPair.second))
+        }
+    }
+
+    @Test
+    fun testSpine() {
+        sut.mergeFiles()
+        sut.book.spine.spineReferences.forEach {
+            assertTrue(sut.hrefIdMap.containsValue(Pair(it.resource.href, it.resource.id)))
         }
     }
 
@@ -39,7 +46,7 @@ class EpubProcessorTest {
         sut.hrefIdMap = sut.calculateResourceNames(listOf(book))
 
         // very small chapter, but contains reference to style.css
-        val ch2 = book.resources.getByHref("OPS/ch2.xhtml")
+        val ch2 = book.resources.getByHref("ch2.xhtml")
         val result = sut.reprocessResourceData(ch2.data, "application/xhtml+xml")
 
 //        The text should be in this form:
