@@ -6,7 +6,6 @@ import nl.siegmann.epublib.domain.SpineReference
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
-import org.apache.commons.lang.builder.ToStringBuilder as tsb
 import java.io.File
 import java.nio.file.DirectoryStream
 import java.nio.file.Files
@@ -27,6 +26,13 @@ import java.nio.file.Paths
  */
 
 fun main(args: Array<String>) {
+  val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
+  val ep = EpubProcessor(stream.toList())
+  ep.mergeFiles()
+  ep.writeBook(Paths.get("./result.epub"))
+}
+
+fun main2(args: Array<String>) {
   val book = Book()
 
   val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
@@ -35,7 +41,7 @@ fun main(args: Array<String>) {
   println(title)
 
   book.metadata.titles = title
-  book.metadata.authors = epubs[0].metadata.authors
+  // book.metadata.authors = epubs[0].metadata.authors
 
   var coverPageSet = false
 
@@ -85,7 +91,7 @@ fun main(args: Array<String>) {
     ++index
   }
 
-  EpubWriter().write(book, File("result.epub").outputStream())
+//  EpubWriter().write(book, File("result.epub").outputStream())
 }
 
 fun makeNewHrefAndId(index: Int, href: String, id: String): Pair<String, String> {

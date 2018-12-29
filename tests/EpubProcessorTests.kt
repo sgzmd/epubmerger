@@ -20,7 +20,6 @@ class EpubProcessorTest {
         val fis = Paths.get("./testdata/chekov.epub").toFile().inputStream()
         book = EpubReader().readEpub(fis)
         sut = EpubProcessor(emptyList())
-
     }
 
     @Test
@@ -29,9 +28,16 @@ class EpubProcessorTest {
         sut.hrefIdMap = map
         sut.reprocessResources(listOf(book))
         map.forEach { oldHref, hrefIdPair ->
-            assertTrue(book.resources.containsByHref(oldHref))
             assertTrue(sut.book.resources.containsByHref(hrefIdPair.first))
             assertTrue(sut.book.resources.containsId(hrefIdPair.second))
+        }
+    }
+
+    @Test
+    fun testSpine() {
+        sut.mergeFiles()
+        sut.book.spine.spineReferences.forEach {
+            assertTrue(sut.hrefIdMap.containsValue(Pair(it.resource.href, it.resource.id)))
         }
     }
 
