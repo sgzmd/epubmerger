@@ -18,7 +18,9 @@ class EpubProcessor(files: List<Path>) {
   fun mergeFiles() {
     val epubs = readFiles()
 
-    val hrefIdMap = calculateResourceNames(epubs)
+    hrefIdMap = calculateResourceNames(epubs)
+    reprocessResources(epubs)
+
     for (epub in epubs) {
       if (epub.coverPage != null && epub.coverImage != null) {
         buildCoverPage(epub)
@@ -47,12 +49,19 @@ class EpubProcessor(files: List<Path>) {
     epubs.forEach { epub ->
       epub.resources.all.forEach { res ->
         val hrefIdPair = hrefIdMap[res.href]
-        val data: ByteArray = res.data
         book.addResource(Resource(
             hrefIdPair?.second,
             reprocessResourceData(res.data, res.mediaType.toString()),
             hrefIdPair?.first,
             res.mediaType))
+      }
+    }
+  }
+
+  internal fun buildSpine(epubs: List<Book>) {
+    for (epub in epubs) {
+      for (si in epub.spine.spineReferences) {
+
       }
     }
   }
