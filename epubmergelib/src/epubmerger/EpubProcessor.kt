@@ -15,28 +15,11 @@ import java.nio.file.Path
  */
 class EpubProcessor(files: List<Path>) {
 
-  class ResourceObject(href: String, idx: Int) {
-    val originalHref = href
-    val bookIndex = idx
-    var newHref : String? = null
-    var newId : String? = null
-
-    fun key(): String {
-      return makeKey(bookIndex, originalHref)
-    }
-
-    companion object {
-      fun makeKey(idx: Int, href: String): String {
-        return "${idx}_${href}"
-      }
-    }
-  }
-
   private val LOG = LoggerFactory.getLogger(EpubProcessor.javaClass)
 
   private var files: List<Path> = files
   internal var book = Book()
-  internal lateinit var hrefIdMap: Map<String, ResourceObject>
+  internal lateinit var hrefIdMap: Map<String, EpubResource>
 
   fun mergeFiles() {
     val epubs = readFiles()
@@ -78,8 +61,8 @@ class EpubProcessor(files: List<Path>) {
     }
   }
 
-  private fun findResourceObject(href: String, idx: Int): ResourceObject? {
-    return hrefIdMap[ResourceObject.makeKey(idx, href)]
+  private fun findResourceObject(href: String, idx: Int): EpubResource? {
+    return hrefIdMap[EpubResource.makeKey(idx, href)]
   }
 
   fun writeBook(path: Path) {
@@ -99,10 +82,10 @@ class EpubProcessor(files: List<Path>) {
     book.metadata.titles.add(series)
   }
 
-  internal fun calculateResourceNames(epubs: List<Book>): HashMap<String, ResourceObject> {
+  internal fun calculateResourceNames(epubs: List<Book>): HashMap<String, EpubResource> {
     // Old href to new href/id
     LOG.info("Calculating new resource names for ${epubs.size} books")
-    val map = HashMap<String, ResourceObject>()
+    val map = HashMap<String, EpubResource>()
     epubs.forEachIndexed { index, epub ->
       epub.resources.all.filterNot {
         isToc(it.mediaType.toString())
@@ -113,7 +96,7 @@ class EpubProcessor(files: List<Path>) {
 
         LOG.info("In ${epub.title} assigning ${resource.href} new href=$href and id=$id")
 
-        val ro = ResourceObject(resource.href, index)
+        val ro = EpubResource(resource.href, index)
         ro.newHref = href
         ro.newId = id
         map.put(ro.key(), ro)
@@ -131,7 +114,7 @@ class EpubProcessor(files: List<Path>) {
       }.forEach { res ->
         LOG.info("For book ${epub.title} reprocessing ${res.href}")
 
-        val hrefIdPair = hrefIdMap[ResourceObject.makeKey(index, res.href)]
+        val hrefIdPair = hrefIdMap[EpubResource.makeKey(index, res.href)]
         LOG.debug("${res.href} => $hrefIdPair")
         val r = book.addResource(Resource(
             hrefIdPair?.newId,
@@ -148,7 +131,7 @@ class EpubProcessor(files: List<Path>) {
   internal fun addTocRef(originalTocRef: TOCReference, bookSection: TOCReference, idx: Int) {
     val title = originalTocRef.title
     val resHref = originalTocRef.resource.href
-    val key = ResourceObject.makeKey(idx, resHref)
+    val key = EpubResource.makeKey(idx, resHref)
     LOG.info("addTocRef title=$title resHref=$resHref key=$key")
     val ro = hrefIdMap[key]
     val newResource = book.resources.getByHref(ro?.newHref)
@@ -168,12 +151,12 @@ class EpubProcessor(files: List<Path>) {
     epubs.forEachIndexed { index, epub ->
       var bookSection: TOCReference
       if (epub.coverPage != null) {
-        val key = ResourceObject.makeKey(index, epub.coverPage.href)
+        val key = EpubResource.makeKey(index, epub.coverPage.href)
         val ro = hrefIdMap[key]
         bookSection = book.addSection(epub.title, book.resources.getByHref(ro?.newHref))
       } else {
         val firstResHref = epub.resources.all.iterator().next().href
-        val key = ResourceObject.makeKey(index, firstResHref)
+        val key = EpubResource.makeKey(index, firstResHref)
         val ro = hrefIdMap[key]
         bookSection = book.addSection(epub.title, book.resources.getByHref(ro?.newHref))
       }
@@ -184,16 +167,6 @@ class EpubProcessor(files: List<Path>) {
           addTocRef(it, bookSection, index)
         }
       }
-
-//      if (epub.tableOfContents != null) {
-//        val tocReferences = epub.tableOfContents.tocReferences
-//
-//      }
-//      for (si in epub.spine.spineReferences) {
-//        val href = si.resource.href
-//        val newHref = hrefIdMap[href]?.newHref
-//        book.spine.addSpineReference(SpineReference(book.resources.getByHref(newHref)))
-//      }
     }
   }
 
@@ -222,8 +195,8 @@ class EpubProcessor(files: List<Path>) {
 
   internal fun buildCoverPage(epub: Book, idx: Int) {
     assert(hrefIdMap != null, { "hrefIdMap must be initialised" })
-    val newImageHrefId = hrefIdMap[ResourceObject.makeKey(idx, epub.coverImage.href)]
-    val newCoverPageHrefId = hrefIdMap[ResourceObject.makeKey(idx, epub.coverPage.href)]
+    val newImageHrefId = hrefIdMap[EpubResource.makeKey(idx, epub.coverImage.href)]
+    val newCoverPageHrefId = hrefIdMap[EpubResource.makeKey(idx, epub.coverPage.href)]
 
     book.coverImage = book.resources.getByHref(newImageHrefId?.newHref)
     book.coverPage = book.resources.getByHref(newCoverPageHrefId?.newHref)
