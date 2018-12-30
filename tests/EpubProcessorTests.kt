@@ -1,16 +1,19 @@
+import com.google.common.truth.Truth.*
 import epubmerger.EpubProcessor
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.epub.EpubReader
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.nio.file.Paths
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class EpubProcessorTest {
+
+    private val LOG = LoggerFactory.getLogger(EpubProcessor.javaClass)
 
     lateinit var book: Book
     lateinit var sut: EpubProcessor
@@ -28,8 +31,9 @@ class EpubProcessorTest {
         sut.hrefIdMap = map
         sut.reprocessResources(listOf(book))
         map.forEach { oldHref, hrefIdPair ->
-            assertTrue(sut.book.resources.containsByHref(hrefIdPair.newHref))
-            assertTrue(sut.book.resources.containsId(hrefIdPair.newId))
+            LOG.info("oldHref=$oldHref hrefIdPair=${hrefIdPair}")
+            assertThat(sut.book.resources.containsByHref(hrefIdPair.newHref)).isTrue()
+            assertThat(sut.book.resources.containsId(hrefIdPair.newId)).isTrue()
         }
     }
 

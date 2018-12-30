@@ -89,7 +89,9 @@ class EpubProcessor(files: List<Path>) {
     LOG.info("Calculating new resource names for ${epubs.size} books")
     val map = HashMap<String, ResourceObject>()
     epubs.forEachIndexed { index, epub ->
-      epub.resources.all.forEachIndexed { resIdx, resource ->
+      epub.resources.all.filterNot {
+        isToc(it.mediaType.toString())
+      }.forEachIndexed { resIdx, resource ->
         val ext = getFileExtension(resource.href)
         val id = "id_${index}_${resIdx}"
         val href = "href_${index}_${resIdx}.$ext"
