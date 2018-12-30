@@ -3,6 +3,7 @@ package epubmerger
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.SpineReference
+import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
 import org.slf4j.LoggerFactory
@@ -53,7 +54,30 @@ class EpubProcessor(files: List<Path>) {
       }
     }
 
-    buildSpine(epubs)
+    generateTocNaive(epubs)
+  }
+
+  private fun generateTocNaive(epubs: List<Book>) {
+    epubs.forEachIndexed { index, epub ->
+      LOG.info("Generating TOC from ${epub.title} (idx $index)")
+      val ro = findResourceObject(epub.coverPage.href, index)
+      val res = book.resources.getByHref(ro?.newHref)
+
+      val topLevelSection = book.tableOfContents.addTOCReference(TOCReference(epub.title, res))
+
+      if (book.spine.findFirstResourceById(res.id) < 0) {
+        book.spine.addSpineReference(SpineReference(res))
+      }
+
+      epub.tableOfContents.tocReferences.forEach {
+        LOG.info("Processing TOC reference ${it.title}")
+        addTocRef(it, topLevelSection, index)
+      }
+    }
+  }
+
+  private fun findResourceObject(href: String, idx: Int): ResourceObject? {
+    return hrefIdMap[ResourceObject.makeKey(idx, href)]
   }
 
   fun writeBook(path: Path) {
@@ -72,7 +96,6 @@ class EpubProcessor(files: List<Path>) {
 
         LOG.info("In ${epub.title} assigning ${resource.href} new href=$href and id=$id")
 
-        // XXX: one can't just key this by href because it can duplicate across multiple books!
         val ro = ResourceObject(resource.href, index)
         ro.newHref = href
         ro.newId = id
@@ -86,7 +109,9 @@ class EpubProcessor(files: List<Path>) {
   internal fun reprocessResources(epubs: List<Book>) {
     LOG.info("Reprocessing resources for ${epubs.size} books")
     epubs.forEachIndexed { index, epub ->
-      epub.resources.all.forEach { res ->
+      epub.resources.all.filterNot {
+        isToc(it.mediaType.toString())
+      }.forEach { res ->
         LOG.info("For book ${epub.title} reprocessing ${res.href}")
 
         val hrefIdPair = hrefIdMap[ResourceObject.makeKey(index, res.href)]
@@ -102,13 +127,56 @@ class EpubProcessor(files: List<Path>) {
     }
   }
 
+
+  internal fun addTocRef(originalTocRef: TOCReference, bookSection: TOCReference, idx: Int) {
+    val title = originalTocRef.title
+    val resHref = originalTocRef.resource.href
+    val key = ResourceObject.makeKey(idx, resHref)
+    LOG.info("addTocRef title=$title resHref=$resHref key=$key")
+    val ro = hrefIdMap[key]
+    val newResource = book.resources.getByHref(ro?.newHref)
+    val childSection = bookSection.addChildSection(TOCReference(title, newResource))
+
+    if (book.spine.findFirstResourceById(newResource.id) < 0) {
+      book.spine.addSpineReference(SpineReference(newResource))
+    }
+
+
+    if (originalTocRef.children != null && !originalTocRef.children.isEmpty()) {
+      originalTocRef.children.forEach { addTocRef(it, childSection, idx) }
+    }
+  }
+
   internal fun buildSpine(epubs: List<Book>) {
-    for (epub in epubs) {
-      for (si in epub.spine.spineReferences) {
-        val href = si.resource.href
-        val newHref = hrefIdMap[href]?.newHref
-        book.spine.addSpineReference(SpineReference(book.resources.getByHref(newHref)))
+    epubs.forEachIndexed { index, epub ->
+      var bookSection: TOCReference
+      if (epub.coverPage != null) {
+        val key = ResourceObject.makeKey(index, epub.coverPage.href)
+        val ro = hrefIdMap[key]
+        bookSection = book.addSection(epub.title, book.resources.getByHref(ro?.newHref))
+      } else {
+        val firstResHref = epub.resources.all.iterator().next().href
+        val key = ResourceObject.makeKey(index, firstResHref)
+        val ro = hrefIdMap[key]
+        bookSection = book.addSection(epub.title, book.resources.getByHref(ro?.newHref))
       }
+
+      if (epub.tableOfContents != null) {
+        val tocRefs = epub.tableOfContents.tocReferences
+        tocRefs.forEach {
+          addTocRef(it, bookSection, index)
+        }
+      }
+
+//      if (epub.tableOfContents != null) {
+//        val tocReferences = epub.tableOfContents.tocReferences
+//
+//      }
+//      for (si in epub.spine.spineReferences) {
+//        val href = si.resource.href
+//        val newHref = hrefIdMap[href]?.newHref
+//        book.spine.addSpineReference(SpineReference(book.resources.getByHref(newHref)))
+//      }
     }
   }
 
@@ -161,6 +229,12 @@ class EpubProcessor(files: List<Path>) {
       }
     }
 
+    internal fun isToc(mediaType: String) : Boolean {
+      return TOC_TYPE.contains(mediaType)
+    }
+
     val SUPPORTED_MEDIA_TYPES = setOf("text/html", "application/xhtml+xml", "text/plain", "text/xml", "application/xml")
+
+    val TOC_TYPE = setOf("application/x-dtbncx+xml")
   }
 }
