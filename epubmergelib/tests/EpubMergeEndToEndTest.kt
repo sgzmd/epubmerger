@@ -14,8 +14,8 @@ class EpubMergeEndToEndTest {
   @Test
   fun endToEndTest() {
     val files = listOf(
-        Paths.get("samples/sample1.epub"),
-        Paths.get("samples/sample2.epub"))
+        Paths.get("testdata/sample1.epub"),
+        Paths.get("testdata/sample2.epub"))
     val epubMerger = EpubProcessor(files)
     epubMerger.mergeFiles()
 
