@@ -1,9 +1,11 @@
-import com.google.common.truth.Truth.*
+package epubmerger
+
+import com.google.common.truth.Truth.assertThat
 import epubmerger.EpubProcessor
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.epub.EpubReader
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Before
+import org.junit.Test
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
 import java.util.regex.Pattern
@@ -13,12 +15,12 @@ import kotlin.test.assertTrue
 
 class EpubProcessorTest {
 
-    private val LOG = LoggerFactory.getLogger(EpubProcessor.javaClass)
+    private val LOG = LoggerFactory.getLogger(EpubProcessor::class.java)
 
     lateinit var book: Book
     lateinit var sut: EpubProcessor
 
-    @BeforeEach
+    @Before
     fun setUp() {
         val fis = Paths.get("./testdata/chekov.epub").toFile().inputStream()
         book = EpubReader().readEpub(fis)
