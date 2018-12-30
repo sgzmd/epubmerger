@@ -40,9 +40,6 @@ class EpubProcessorTest {
     @Test
     fun testSpine() {
         sut.mergeFiles()
-//        sut.book.spine.spineReferences.forEach {
-//            assertTrue(sut.hrefIdMap.containsValue(Pair(it.resource.href, it.resource.id)))
-//        }
     }
 
     @Test

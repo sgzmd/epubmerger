@@ -36,8 +36,10 @@ fun main4(args: Array<String>) {
 
 fun main(args: Array<String>) {
   val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
-  val ep = EpubProcessor(stream.toList())
+  val files = stream.toList().sorted()
+  val ep = EpubProcessor(files)
   ep.mergeFiles()
+
   ep.writeBook(Paths.get("./result.epub"))
 }
 

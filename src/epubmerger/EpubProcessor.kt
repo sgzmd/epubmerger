@@ -55,6 +55,8 @@ class EpubProcessor(files: List<Path>) {
     }
 
     generateTocNaive(epubs)
+    assignAuthor(epubs)
+    assignSeriesName(epubs)
   }
 
   private fun generateTocNaive(epubs: List<Book>) {
@@ -82,6 +84,19 @@ class EpubProcessor(files: List<Path>) {
 
   fun writeBook(path: Path) {
     EpubWriter().write(book, path.toFile().outputStream())
+  }
+
+  fun assignAuthor(epubs: List<Book>) {
+    book.metadata.authors.clear()
+    book.metadata.authors.addAll( epubs.map { it.metadata.authors }.flatten().distinct() )
+  }
+
+  fun assignSeriesName(epubs: List<Book>) {
+    book.metadata.titles.clear()
+    val allTitles = epubs.map { it.metadata.titles }.flatten()
+    val series = allTitles.joinToString("; ")
+    book.metadata.titles.addAll(allTitles)
+    book.metadata.titles.add(series)
   }
 
   internal fun calculateResourceNames(epubs: List<Book>): HashMap<String, ResourceObject> {
