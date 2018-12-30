@@ -5,7 +5,6 @@ import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.SpineReference
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
-import nl.siegmann.epublib.epub.EpubWriter
 import java.io.File
 import java.nio.file.DirectoryStream
 import java.nio.file.Files
@@ -35,12 +34,16 @@ fun main4(args: Array<String>) {
 
 
 fun main(args: Array<String>) {
-  val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get("./" + args[0]), args[1])
+  if (args.size < 3) {
+    println("Usage: java -jar /path/to/jar /path/to/source/directory *.epub output.epub")
+    return
+  }
+  val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get(args[0]), args[1])
   val files = stream.toList().sorted()
   val ep = EpubProcessor(files)
   ep.mergeFiles()
 
-  ep.writeBook(Paths.get("./result.epub"))
+  ep.writeBook(Paths.get(args[2]))
 }
 
 fun main2(args: Array<String>) {
