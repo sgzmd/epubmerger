@@ -2,31 +2,26 @@ package com.sigizmund.epubmergeapp
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.fondesa.kpermissions.extension.listeners
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.github.angads25.filepicker.model.DialogConfigs
 import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
 import epubmerger.EpubProcessor
-
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.activityUiThreadWithContext
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity() {
