@@ -47,6 +47,11 @@ dependencies {
     }
 
     implementation 'org.slf4j:slf4j-android:1.7.25'
+    implementation 'lib.kashif:folderpicker:2.4'
+    implementation('com.github.fondesa:kpermissions:1.0.0')
+
+    // https://mvnrepository.com/artifact/org.jetbrains.anko/anko-commons
+    implementation group: 'org.jetbrains.anko', name: 'anko-commons', version: '0.10.5'
 
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.0'
