@@ -20,11 +20,13 @@ import epubmerger.EpubProcessor
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.activityUiThreadWithContext
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity() {
@@ -78,10 +80,13 @@ class MainActivity : AppCompatActivity() {
 
         if (ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED ||
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PERMISSION_GRANTED ||
             ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED ) {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PERMISSION_GRANTED
+        ) {
             setupPermissions()
             return
         }
@@ -95,8 +100,22 @@ class MainActivity : AppCompatActivity() {
         dialogProperties.extensions = null
 
         val picker = FilePickerDialog(this, dialogProperties)
-        picker.setDialogSelectionListener {
-            val a = it
+        picker.setDialogSelectionListener { files ->
+            doAsync {
+                val paths = files.map { Paths.get(it) }.toList()
+                val processor = EpubProcessor(paths)
+                processor.mergeFiles()
+                val title = processor.book.title
+                val fileName = title.replace(' ', '_').replace('/', '_')
+
+                val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
+                val resultPath = Paths.get(downloads.toString(), "$fileName.epub")
+                processor.writeBook(resultPath)
+
+                activityUiThreadWithContext {
+                    Toast.makeText(this, "Merged file saved to $resultPath", Toast.LENGTH_LONG).show()
+                }
+            }
         }
         picker.show()
     }
