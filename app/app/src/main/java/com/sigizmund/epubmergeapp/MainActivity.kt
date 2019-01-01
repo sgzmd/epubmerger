@@ -1,7 +1,6 @@
 package com.sigizmund.epubmergeapp
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.os.Environment
@@ -18,9 +17,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.activityUiThreadWithContext
 import org.jetbrains.anko.doAsync
 import java.io.File
-import java.nio.file.DirectoryStream
-import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 
@@ -114,30 +110,4 @@ class MainActivity : AppCompatActivity() {
         }
         picker.show()
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == FILE_SELECT_CODE) {
-            val a = data?.extras
-            doAsync {
-
-                val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
-                return@doAsync
-                val stream: DirectoryStream<Path> = Files.newDirectoryStream(downloads, "*.epub")
-                val files = stream.toList()
-
-                val processor = EpubProcessor(files)
-                processor.mergeFiles()
-                val result = Paths.get(downloads.toString(), "result.epub")
-                processor.writeBook(result)
-
-                activityUiThreadWithContext {
-                    Toast.makeText(this, "File was produced", Toast.LENGTH_LONG)
-                }
-
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
 }
