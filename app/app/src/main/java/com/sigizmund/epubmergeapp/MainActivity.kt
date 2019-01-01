@@ -12,12 +12,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.fondesa.kpermissions.extension.listeners
 import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.github.angads25.filepicker.model.DialogConfigs
+import com.github.angads25.filepicker.model.DialogProperties
+import com.github.angads25.filepicker.view.FilePickerDialog
 import epubmerger.EpubProcessor
 
 import kotlinx.android.synthetic.main.activity_main.*
-import lib.folderpicker.FolderPicker
 import org.jetbrains.anko.activityUiThreadWithContext
 import org.jetbrains.anko.doAsync
+import java.io.File
 import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -83,17 +86,26 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val intent = Intent(this, FolderPicker::class.java)
-        intent.putExtra("title", "Select files to merge")
-        intent.putExtra("pickFiles", true)
+        val dialogProperties = DialogProperties()
+        dialogProperties.selection_mode = DialogConfigs.MULTI_MODE
+        dialogProperties.selection_type = DialogConfigs.FILE_SELECT
+        dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
+        dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
+        dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
+        dialogProperties.extensions = null
 
-        startActivityForResult(intent, FILE_SELECT_CODE)
+        val picker = FilePickerDialog(this, dialogProperties)
+        picker.setDialogSelectionListener {
+            val a = it
+        }
+        picker.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_SELECT_CODE) {
             val a = data?.extras
             doAsync {
+
                 val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
                 return@doAsync
                 val stream: DirectoryStream<Path> = Files.newDirectoryStream(downloads, "*.epub")
