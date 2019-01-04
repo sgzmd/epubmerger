@@ -23,7 +23,10 @@ class EpubProcessor(files: List<Path>) {
 
   fun mergeFiles() {
     val epubs = readFiles()
+    mergeBooks(epubs)
+  }
 
+  fun mergeBooks(epubs: List<Book>) {
     hrefIdMap = calculateResourceNames(epubs)
     reprocessResources(epubs)
 
