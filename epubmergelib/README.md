@@ -15,3 +15,16 @@
 Right, so here's the new plan. I know we won't be able to support absolutely everything this way but at very least we'll be able to compile something usable.
 
   * Step 1: Identify all text files, figure out in which order they go, use some heuristic to get the title of each file
+
+## Plan C: we don't handle multiple TOC navpoints to a single physical resource
+
+This happens when TOC contains references like `file1.xhtml#0000`. This means the whole process have to be very much TOC driven since this is the definitive source of truth.
+
+The process will be as follows:
+
+   * Go through each book, navigate through TOC
+   * For each TOC entry calculate new resource entry, consisting of:
+      * Book Index
+      * New resource name
+      * Anchor name if any (`#xyz` thingie).
+   * Together these three things will produce the HREF in the new book.
