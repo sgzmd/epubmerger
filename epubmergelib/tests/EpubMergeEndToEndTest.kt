@@ -45,4 +45,15 @@ class EpubMergeEndToEndTest {
             "Sample Book (образец) 2",
             "Sample Book (образец) 1; Sample Book (образец) 2"))
   }
+
+  @Test
+  fun mergeRealSamples() {
+    val files = listOf(
+        Paths.get("testdata/aliceDynamic.epub"),
+        Paths.get("testdata/pg1342-images.epub"),
+        Paths.get("testdata/pg2600-images.epub"))
+    val epubMerger = EpubProcessor(files)
+    epubMerger.mergeFiles()
+    epubMerger.writeBook(Paths.get("test-result.epub"))
+  }
 }

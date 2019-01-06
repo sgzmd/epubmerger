@@ -1,21 +1,21 @@
 package epubmerger
 
-import nl.siegmann.epublib.domain.Book
-import nl.siegmann.epublib.domain.Resource
-import nl.siegmann.epublib.domain.SpineReference
-import nl.siegmann.epublib.domain.TOCReference
+import nl.siegmann.epublib.domain.*
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
 import org.slf4j.LoggerFactory
 import java.nio.charset.Charset
 import java.nio.file.Path
+import java.util.*
 
 /**
- * Joins multiple EPub files into a single file.
+ * Joins multiple EPub files into a single file. This needs much refactoring.
  */
 class EpubProcessor(files: List<Path>) {
 
   private val LOG = LoggerFactory.getLogger(EpubProcessor.javaClass)
+  private val VERSION = "1.0"
+  private val PUBLISHER = "EpubMerger $VERSION"
 
   private var files: List<Path> = files
   internal var book = Book()
@@ -41,8 +41,7 @@ class EpubProcessor(files: List<Path>) {
     }
 
     generateTocNaive(epubs)
-    assignAuthor(epubs)
-    assignSeriesName(epubs)
+    generateMetadata(epubs)
   }
 
   private fun generateTocNaive(epubs: List<Book>) {
@@ -72,17 +71,20 @@ class EpubProcessor(files: List<Path>) {
     EpubWriter().write(book, path.toFile().outputStream())
   }
 
-  fun assignAuthor(epubs: List<Book>) {
+  fun generateMetadata(epubs: List<Book>) {
     book.metadata.authors.clear()
-    book.metadata.authors.addAll( epubs.map { it.metadata.authors }.flatten().distinct() )
-  }
+    book.metadata.authors.addAll( epubs.map { it.metadata.authors }.flatten<Author?>().distinct() )
 
-  fun assignSeriesName(epubs: List<Book>) {
     book.metadata.titles.clear()
-    val allTitles = epubs.map { it.metadata.titles }.flatten()
+    val allTitles = epubs.map { it.metadata.titles }.flatten<String?>()
     val series = allTitles.joinToString("; ")
     book.metadata.titles.addAll(allTitles)
     book.metadata.titles.add(series)
+
+    book.metadata.addIdentifier(Identifier("uuid", UUID.randomUUID().toString()))
+    val publishers = epubs.map { it.metadata.publishers }.flatten().toSet()
+    book.metadata.publishers.addAll(publishers)
+    book.metadata.addPublisher(PUBLISHER)
   }
 
   internal fun calculateResourceNames(epubs: List<Book>): HashMap<String, EpubResource> {
@@ -147,29 +149,6 @@ class EpubProcessor(files: List<Path>) {
 
     if (originalTocRef.children != null && !originalTocRef.children.isEmpty()) {
       originalTocRef.children.forEach { addTocRef(it, childSection, idx) }
-    }
-  }
-
-  internal fun buildSpine(epubs: List<Book>) {
-    epubs.forEachIndexed { index, epub ->
-      var bookSection: TOCReference
-      if (epub.coverPage != null) {
-        val key = EpubResource.makeKey(index, epub.coverPage.href)
-        val ro = hrefIdMap[key]
-        bookSection = book.addSection(epub.title, book.resources.getByHref(ro?.newHref))
-      } else {
-        val firstResHref = epub.resources.all.iterator().next().href
-        val key = EpubResource.makeKey(index, firstResHref)
-        val ro = hrefIdMap[key]
-        bookSection = book.addSection(epub.title, book.resources.getByHref(ro?.newHref))
-      }
-
-      if (epub.tableOfContents != null) {
-        val tocRefs = epub.tableOfContents.tocReferences
-        tocRefs.forEach {
-          addTocRef(it, bookSection, index)
-        }
-      }
     }
   }
 
