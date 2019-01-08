@@ -23,7 +23,14 @@ This happens when TOC contains references like `file1.xhtml#0000`. This means th
 The process will be as follows:
 
    * Go through each book, navigate through TOC
-   * For each TOC entry calculate new resource entry, consisting of:
+   * For each TOC entry
+     * Check if we have this resource in the new book. If not:
+        * Add new resource to the book, renaming it to include the index of the book across all epubs
+        * Mark this resource as added in some internal map (if needed)
+     *
+
+
+
       * Book Index
       * New resource name
       * Anchor name if any (`#xyz` thingie).
