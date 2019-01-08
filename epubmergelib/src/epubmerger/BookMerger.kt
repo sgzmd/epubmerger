@@ -3,6 +3,8 @@ package epubmerger
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.TOCReference
+import org.jsoup.Jsoup
+import org.jsoup.select.Elements
 
 class BookMerger(var epubs: List<Book>) {
   val result = Book()
@@ -47,6 +49,7 @@ class BookMerger(var epubs: List<Book>) {
       val id = "${bookIndex}_${sourceTocReference.resourceId}"
 
       // TODO: reprocess resource data
+
       val resource = Resource(id, sourceTocReference.resource.data, href, sourceTocReference.resource.mediaType)
       book.resources.add(resource)
     }
@@ -64,5 +67,11 @@ class BookMerger(var epubs: List<Book>) {
     sourceTocReference.children.forEach { childTocEntry ->
       processTOCReference(bookIndex, childTocEntry, book, resultTOCReference)
     }
+  }
+
+  private fun reprocessResource(data: ByteArray, bookIndex: Int) {
+    val soup = Jsoup.parse(String(data))
+    val elements: Elements = soup.select("*")
+
   }
 }
