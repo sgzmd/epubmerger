@@ -75,6 +75,15 @@
     </dependency>
 
 
+    <!-- https://mvnrepository.com/artifact/com.google.truth/truth -->
+    <dependency>
+      <groupId>com.google.truth</groupId>
+      <artifactId>truth</artifactId>
+      <version>0.42</version>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <build>

@@ -2,6 +2,7 @@ package epubmerger
 
 import nl.siegmann.epublib.domain.Book
 import org.jsoup.Jsoup
+import java.nio.file.Paths
 
 object ResourceProcessor {
   private val SUPPORTED_SRC_ATTRS = listOf("src", "href")
@@ -20,5 +21,10 @@ object ResourceProcessor {
         }
       }
     }
+  }
+
+  fun createResourceName(href: String, bookIndex: Int): String {
+    val path = Paths.get(href)
+    return if (path.parent != null) "${path.parent}/${bookIndex}_${path.fileName}" else "${bookIndex}_${path.fileName}"
   }
 }
