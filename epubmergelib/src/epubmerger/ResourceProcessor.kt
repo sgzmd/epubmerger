@@ -23,8 +23,15 @@ object ResourceProcessor {
     }
   }
 
-  fun createResourceName(href: String, bookIndex: Int): String {
+  fun createResourceName(href: String, id: String, bookIndex: Int): EpubResource {
     val path = Paths.get(href)
-    return if (path.parent != null) "${path.parent}/${bookIndex}_${path.fileName}" else "${bookIndex}_${path.fileName}"
+    val newhref = if (path.parent != null)
+      "${path.parent}/${bookIndex}_${path.fileName}"
+    else
+      "${bookIndex}_${path.fileName}"
+
+    val newid = "${bookIndex}_${id}"
+
+    return EpubResource(href, bookIndex, newhref, newid)
   }
 }

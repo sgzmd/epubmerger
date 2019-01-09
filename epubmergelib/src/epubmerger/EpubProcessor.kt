@@ -101,10 +101,10 @@ class EpubProcessor(files: List<Path>) {
 
         LOG.info("In ${epub.title} assigning ${resource.href} new href=$href and id=$id")
 
-        val ro = EpubResource(resource.href, index)
+        val ro = EpubResource(resource.href, index, null, null)
         ro.newHref = href
         ro.newId = id
-        map.put(ro.key(), ro)
+//        map.put(ro.key(), ro)
       }
     }
 
