@@ -2,6 +2,7 @@ package epubmerger
 
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.MediaType
+import nl.siegmann.epublib.util.StringUtil
 import org.jsoup.Jsoup
 import java.net.URI
 import java.nio.file.Paths
@@ -76,7 +77,10 @@ object ResourceProcessor {
     else
       "${bookIndex}_${path.fileName}"
 
-    return EpubResource(href, bookIndex, newhref, "${bookIndex}_${id}")
+    var resourceId = "id_${bookIndex}_${path.fileName}"
+    resourceId = StringUtil.substringBeforeLast(resourceId, '.')
+
+    return EpubResource(href, bookIndex, newhref, resourceId)
   }
 
 

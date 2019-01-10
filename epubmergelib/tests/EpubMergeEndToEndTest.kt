@@ -28,19 +28,27 @@ class EpubMergeEndToEndTest {
     val book = EpubReader().readEpub(tempFile.inputStream())
     assertThat(book).isNotNull()
 
-    var expectedResources = listOf(
-        "item_0_Section0003.xhtml",
-        "item_1_Section0001.xhtml",
-        "item_0_Section0001.xhtml",
+    var expectedResourceIds = listOf(
         "ncx",
-        "item_1_Section0003.xhtml",
-        "item_1_Section0002.xhtml",
+        "id_0_Section0002",
+        "id_0_Section0003",
+        "id_1_Section0002",
+        "id_1_Section0003",
         "item_1",
-        "item_0_Section0002.xhtml")
+        "item_2"
+    )
 
+    val expectedHrefs = listOf("toc.ncx",
+        "Text/0_Section0002.xhtml",
+        "Text/0_Section0003.xhtml",
+        "Text/1_Section0002.xhtml",
+        "Text/1_Section0003.xhtml",
+        "Text/0_Section0001.xhtml",
+        "Text/1_Section0001.xhtml"
+    )
 
-    assertThat(book.resources.all.map { it.id }).containsExactlyElementsIn(expectedResources)
-    assertThat(book.resources.all.map { it.href }).containsExactlyElementsIn(expectedResources)
+    assertThat(book.resources.all.map { it.id }).containsExactlyElementsIn(expectedResourceIds)
+    assertThat(book.resources.all.map { it.href }).containsExactlyElementsIn(expectedHrefs)
 
     assertThat(book.metadata.titles).containsExactlyElementsIn(
         listOf(

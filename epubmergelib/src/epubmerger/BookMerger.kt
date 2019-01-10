@@ -4,9 +4,13 @@ import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubWriter
+import org.slf4j.LoggerFactory
 import java.nio.file.Path
 
 class BookMerger(var epubs: List<Book>) {
+  val TOC_TYPE = setOf("application/x-dtbncx+xml")
+  val LOG = LoggerFactory.getLogger(BookMerger::class.java)
+
   val result = Book()
   val resources = HashMap<Pair<Int, String>, EpubResource>()
 
@@ -36,7 +40,8 @@ class BookMerger(var epubs: List<Book>) {
       book.spine.getResource(0)
     }
 
-    val topLevelTocReference = result.addSection(book.title, firstPageResource)
+    val firstPage = resources.get(index.to(firstPageResource.href))
+    val topLevelTocReference = result.addSection(book.title, result.resources.getByHref(firstPage!!.newHref))
     book.tableOfContents.tocReferences.forEach { tocReference ->
       processTOCReference(index, tocReference, book, topLevelTocReference)
     }
@@ -45,16 +50,20 @@ class BookMerger(var epubs: List<Book>) {
   private fun addAllResources() {
     epubs.forEachIndexed { index, epub ->
       epub.resources.all.forEach { res ->
-        val key = index.to(res.href)
-        if (!resources.containsKey(key)) {
-          val epubResource = ResourceProcessor.createEpubResource(res.href, res.id, index)
-          resources.put(key, epubResource)
-          val res = Resource(
-              epubResource.newId,
-              ResourceProcessor.reprocessXhtmlFile(res.data, epub, index),
-              epubResource.newHref,
-              res.mediaType)
-          result.resources.add(res)
+        val key = index to res.href
+        if (!TOC_TYPE.contains(res.mediaType.name)) {
+          if (!resources.containsKey(key)) {
+            val epubResource = ResourceProcessor.createEpubResource(res.href, res.id, index)
+            resources.put(key, epubResource)
+            val res = Resource(
+                epubResource.newId,
+                ResourceProcessor.reprocessXhtmlFile(res.data, epub, index),
+                epubResource.newHref,
+                res.mediaType)
+
+            // We are not using resources.add because it screws resource id
+            result.resources.resourceMap.put(res.href, res)
+          }
         }
       }
     }
