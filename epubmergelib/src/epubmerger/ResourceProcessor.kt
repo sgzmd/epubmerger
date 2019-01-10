@@ -61,7 +61,7 @@ object ResourceProcessor {
 
         // Constructing new EpubResource descriptor
         val res = book.resources.getByHref(href.href)
-        val newEpubResource = createResourceName(res.href, res.id, index)
+        val newEpubResource = createEpubResource(res.href, res.id, index)
         it.attr(attr, href.withUpdatedHref(newEpubResource.newHref!!))
       }
     }
@@ -69,7 +69,7 @@ object ResourceProcessor {
     return soup.toString().toByteArray()
   }
 
-  fun createResourceName(href: String, id: String, bookIndex: Int): EpubResource {
+  internal fun createEpubResource(href: String, id: String, bookIndex: Int): EpubResource {
     val path = Paths.get(href)
     val newhref = if (path.parent != null)
       "${path.parent}/${bookIndex}_${path.fileName}"

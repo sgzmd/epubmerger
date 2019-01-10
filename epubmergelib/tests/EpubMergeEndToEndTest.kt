@@ -16,28 +16,31 @@ class EpubMergeEndToEndTest {
     val files = listOf(
         Paths.get("testdata/sample1.epub"),
         Paths.get("testdata/sample2.epub"))
-    val epubMerger = EpubProcessor(files)
-    epubMerger.mergeFiles()
+    val epubMerger = BookMerger(files.map { EpubReader().readEpub(it.toFile().inputStream()) })
+    epubMerger.mergeBooks()
 
     val tempFile = File.createTempFile("epubmerger-test", ".epub")
-    tempFile.deleteOnExit()
+    // tempFile.deleteOnExit()
+    LOG.info(tempFile.absolutePath)
 
     epubMerger.writeBook(Paths.get(tempFile.absolutePath))
 
     val book = EpubReader().readEpub(tempFile.inputStream())
     assertThat(book).isNotNull()
 
-    var expectedResources = HashMap<String, String>()
-    for (i in 0..1) {
-      for (j in 0..2) {
-        expectedResources.put("id_${i}_$j", "href_${i}_${j}.xhtml")
-      }
-    }
+    var expectedResources = listOf(
+        "item_0_Section0003.xhtml",
+        "item_1_Section0001.xhtml",
+        "item_0_Section0001.xhtml",
+        "ncx",
+        "item_1_Section0003.xhtml",
+        "item_1_Section0002.xhtml",
+        "item_1",
+        "item_0_Section0002.xhtml")
 
-    expectedResources.put("ncx", "toc.ncx")
 
-    assertThat(book.resources.all.map { it.id }).containsExactlyElementsIn(expectedResources.keys)
-    assertThat(book.resources.all.map { it.href }).containsExactlyElementsIn(expectedResources.values)
+    assertThat(book.resources.all.map { it.id }).containsExactlyElementsIn(expectedResources)
+    assertThat(book.resources.all.map { it.href }).containsExactlyElementsIn(expectedResources)
 
     assertThat(book.metadata.titles).containsExactlyElementsIn(
         listOf(
@@ -52,8 +55,8 @@ class EpubMergeEndToEndTest {
         Paths.get("testdata/aliceDynamic.epub"),
         Paths.get("testdata/pg1342-images.epub"),
         Paths.get("testdata/pg2600-images.epub"))
-    val epubMerger = EpubProcessor(files)
-    epubMerger.mergeFiles()
+    val epubMerger = BookMerger(files.map { EpubReader().readEpub(it.toFile().inputStream()) })
+    epubMerger.mergeBooks()
     epubMerger.writeBook(Paths.get("test-result.epub"))
   }
 }
