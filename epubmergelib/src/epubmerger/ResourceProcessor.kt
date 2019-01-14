@@ -3,6 +3,8 @@ package epubmerger
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.util.StringUtil
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Entities
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.nio.file.Paths
@@ -29,7 +31,7 @@ object ResourceProcessor {
 
   }
 
-  private val SUPPORTED_SRC_ATTRS = listOf("src", "href")
+  private val SUPPORTED_SRC_ATTRS = listOf("src", "href", "xlink:href")
 
   /**
    * Updates XHTML file so that:
@@ -71,6 +73,12 @@ object ResourceProcessor {
         it.attr(attr, href.withUpdatedHref(newEpubResource.newHref!!))
       }
     }
+
+    soup.outputSettings()
+        .prettyPrint(true)
+        .indentAmount(2)
+        .syntax(Document.OutputSettings.Syntax.xml)
+        .escapeMode(Entities.EscapeMode.xhtml)
 
     return soup.toString().toByteArray()
   }

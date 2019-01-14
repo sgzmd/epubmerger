@@ -38,12 +38,15 @@ class BookMerger(var epubs: List<Book>) {
   internal fun processTOC(book: Book, index: Int) {
     LOG.info("processTOC(${book.title})")
     val firstPageResource = if (book.coverPage != null) {
+      LOG.info("Using cover page ${book.coverPage.href} for book ${book.title}")
       book.coverPage
     } else {
+      LOG.info("Using first spine item ${book.spine.getResource(0)} for book ${book.title}\"")
       book.spine.getResource(0)
     }
 
-    val firstPage = resources.get(index.to(firstPageResource.href))
+    val firstPage: EpubResource? = resources.get(index to firstPageResource.href)
+    LOG.info("Using firstPage=${firstPage}")
     val topLevelTocReference = result.addSection(book.title, result.resources.getByHref(firstPage!!.newHref))
     book.tableOfContents.tocReferences.forEach { tocReference ->
       processTOCReference(index, tocReference, book, topLevelTocReference)
