@@ -1,6 +1,7 @@
 package epubmerger
 
 import nl.siegmann.epublib.domain.Book
+import nl.siegmann.epublib.domain.MediaType
 import nl.siegmann.epublib.domain.Resource
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubWriter
@@ -15,6 +16,7 @@ class BookMerger(var epubs: List<Book>) {
   val resources = HashMap<Pair<Int, String>, EpubResource>()
 
   fun mergeBooks() {
+    LOG.info("Starting to merge ${epubs.size} books")
     addAllResources()
 
     epubs.forEachIndexed { index, epub ->
@@ -34,6 +36,7 @@ class BookMerger(var epubs: List<Book>) {
   }
 
   internal fun processTOC(book: Book, index: Int) {
+    LOG.info("processTOC(${book.title})")
     val firstPageResource = if (book.coverPage != null) {
       book.coverPage
     } else {
@@ -55,9 +58,14 @@ class BookMerger(var epubs: List<Book>) {
           if (!resources.containsKey(key)) {
             val epubResource = ResourceProcessor.createEpubResource(res.href, res.id, index)
             resources.put(key, epubResource)
+
+            val data = if (res.mediaType.isTextBasedFormat)
+              ResourceProcessor.reprocessXhtmlFile(res.data, epub, index)
+            else res.data
+
             val res = Resource(
                 epubResource.newId,
-                ResourceProcessor.reprocessXhtmlFile(res.data, epub, index),
+                data,
                 epubResource.newHref,
                 res.mediaType)
 
@@ -104,3 +112,8 @@ class BookMerger(var epubs: List<Book>) {
     EpubWriter().write(result, path.toFile().outputStream())
   }
 }
+
+private val MediaType.isTextBasedFormat: Boolean
+  get() {
+    return this.name in setOf("text/html", "application/xhtml+xml", "text/plain", "text/xml", "application/xml")
+  }

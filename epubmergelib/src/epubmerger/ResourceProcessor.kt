@@ -1,13 +1,15 @@
 package epubmerger
 
 import nl.siegmann.epublib.domain.Book
-import nl.siegmann.epublib.domain.MediaType
 import nl.siegmann.epublib.util.StringUtil
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.nio.file.Paths
 
 object ResourceProcessor {
+
+  val LOG = LoggerFactory.getLogger(ResourceProcessor::class.java)
 
   class FullHref(fullHref: String) {
     val uri: URI = URI(fullHref)
@@ -55,8 +57,11 @@ object ResourceProcessor {
           continue
         }
 
+        LOG.info("processing element $it with attribute $attr='${it.attr(attr)}'")
+
         val href = FullHref(it.attr(attr))
         if (!book.resources.containsByHref(href.href)) {
+          LOG.info("In book ${book.title} there is href $href which cannot be found in the book")
           continue
         }
 
@@ -86,7 +91,3 @@ object ResourceProcessor {
 
 }
 
-private val MediaType.isTextBasedFormat: Boolean
-  get() {
-    return this.name in setOf("text/html", "application/xhtml+xml", "text/plain", "text/xml", "application/xml")
-  }
