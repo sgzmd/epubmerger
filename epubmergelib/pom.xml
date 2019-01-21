@@ -84,6 +84,15 @@
     </dependency>
 
 
+    <!-- https://mvnrepository.com/artifact/org.idpf/epubcheck -->
+    <dependency>
+      <groupId>org.idpf</groupId>
+      <artifactId>epubcheck</artifactId>
+      <version>4.1.0</version>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <build>

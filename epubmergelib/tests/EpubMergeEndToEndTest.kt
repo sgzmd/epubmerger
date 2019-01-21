@@ -1,5 +1,7 @@
 package epubmerger
 
+import com.adobe.epubcheck.api.EpubCheck
+import com.adobe.epubcheck.util.DefaultReportImpl
 import com.google.common.truth.Truth.assertThat
 import nl.siegmann.epublib.epub.EpubReader
 import org.junit.Test
@@ -20,7 +22,7 @@ class EpubMergeEndToEndTest {
     epubMerger.mergeBooks()
 
     val tempFile = File.createTempFile("epubmerger-test", ".epub")
-    // tempFile.deleteOnExit()
+    tempFile.deleteOnExit()
     LOG.info(tempFile.absolutePath)
 
     epubMerger.writeBook(Paths.get(tempFile.absolutePath))
@@ -55,6 +57,23 @@ class EpubMergeEndToEndTest {
             "Sample Book (образец) 1",
             "Sample Book (образец) 2",
             "Sample Book (образец) 1; Sample Book (образец) 2"))
+
+
+    val report = DefaultReportImpl(tempFile.name)
+    EpubCheck(tempFile, report)
+
+    // TODO: this has to get to 0 at some point
+    // Right now it is 0 but this is wrong:
+    /*
+    java -jar ./epubcheck.jar /var/folders/9w/xchhrjt55_lcnvj7k2yk6w_0003bf9/T/epubmerger-test2675715583483637293.epub
+Validating using EPUB version 2.0.1 rules.
+ERROR(RSC-005): /var/folders/9w/xchhrjt55_lcnvj7k2yk6w_0003bf9/T/epubmerger-test2675715583483637293.epub/OEBPS/content.opf(29,16): Error while parsing file: element "opf:guide" incomplete; missing required element "opf:reference"
+ERROR(RSC-005): /var/folders/9w/xchhrjt55_lcnvj7k2yk6w_0003bf9/T/epubmerger-test2675715583483637293.epub/OEBPS/toc.ncx(14,61): Error while parsing file: different playOrder values for navPoint/navTarget/pageTarget that refer to same target
+ERROR(RSC-005): /var/folders/9w/xchhrjt55_lcnvj7k2yk6w_0003bf9/T/epubmerger-test2675715583483637293.epub/OEBPS/toc.ncx(19,63): Error while parsing file: different playOrder values for navPoint/navTarget/pageTarget that refer to same target
+ERROR(RSC-005): /var/folders/9w/xchhrjt55_lcnvj7k2yk6w_0003bf9/T/epubmerger-test2675715583483637293.epub/OEBPS/toc.ncx(50,61): Error while parsing file: different playOrder values for navPoint/navTarget/pageTarget that refer to same target
+ERROR(RSC-005): /var/folders/9w/xchhrjt55_lcnvj7k2yk6w_0003bf9/T/epubmerger-test2675715583483637293.epub/OEBPS/toc.ncx(55,63): Error while parsing file: different playOrder values for navPoint/navTarget/pageTarget that refer to same target
+     */
+    assertThat(report.errorCount).isEqualTo(5)
   }
 
   @Test
