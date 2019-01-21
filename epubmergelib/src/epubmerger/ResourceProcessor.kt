@@ -70,7 +70,9 @@ object ResourceProcessor {
         // Constructing new EpubResource descriptor
         val res = book.resources.getByHref(href.href)
         val newEpubResource = createEpubResource(res.href, res.id, index)
-        it.attr(attr, href.withUpdatedHref(newEpubResource.newHref!!))
+        val withUpdatedHref = href.withUpdatedHref(newEpubResource.newHref!!)
+        LOG.info("Updating href to ${withUpdatedHref}")
+        it.attr(attr, withUpdatedHref)
       }
     }
 

@@ -31,7 +31,18 @@ class BookMerger(var epubs: List<Book>) {
       }
     }
 
+
     result.generateSpineFromTableOfContents()
+    epubs.forEachIndexed { index, epub ->
+      epub.spine.spineReferences.forEach { spr ->
+        val key = index to spr.resource.href
+        val newHref = resources.get(key)!!.newHref
+        if (result.spine.getResourceIndex(newHref) == -1) {
+          result.spine.addResource(this.result.resources.getByHref(newHref))
+        }
+      }
+    }
+
     generateMetadata()
   }
 
