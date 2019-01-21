@@ -1,14 +1,15 @@
 package epubmerger
 
-import nl.siegmann.epublib.domain.Book
-import nl.siegmann.epublib.domain.MediaType
-import nl.siegmann.epublib.domain.Resource
-import nl.siegmann.epublib.domain.TOCReference
+import nl.siegmann.epublib.domain.*
 import nl.siegmann.epublib.epub.EpubWriter
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import java.util.*
 
 class BookMerger(var epubs: List<Book>) {
+  private val VERSION = "1.0"
+  private val PUBLISHER = "EpubMerger $VERSION"
+
   val TOC_TYPE = setOf("application/x-dtbncx+xml")
   val LOG = LoggerFactory.getLogger(BookMerger::class.java)
 
@@ -117,9 +118,19 @@ class BookMerger(var epubs: List<Book>) {
   }
 
   private fun generateMetadata() {
-    val epr = EpubProcessor(emptyList())
-    epr.book = result
-    epr.generateMetadata(epubs)
+    result.metadata.authors.clear()
+    result.metadata.authors.addAll(epubs.map { it.metadata.authors }.flatten<Author?>().distinct())
+
+    result.metadata.titles.clear()
+    val allTitles = epubs.map { it.metadata.titles }.flatten<String?>()
+    val series = allTitles.joinToString("; ")
+    result.metadata.titles.addAll(allTitles)
+    result.metadata.titles.add(series)
+
+    result.metadata.addIdentifier(Identifier("uuid", UUID.randomUUID().toString()))
+    val publishers = epubs.map { it.metadata.publishers }.flatten().toSet()
+    result.metadata.publishers.addAll(publishers)
+    result.metadata.addPublisher(PUBLISHER)
   }
 
   fun writeBook(path: Path) {

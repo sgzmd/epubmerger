@@ -11,7 +11,7 @@ class ResourceProcessorTest {
   fun testNewHrefGenerator() {
     val imagePngResource = ResourceProcessor.createEpubResource("image.png", "id1", 1)
     assertThat(imagePngResource.newHref).isEqualTo("1_image.png")
-    assertThat(imagePngResource.newId).isEqualTo("1_id1")
+    assertThat(imagePngResource.newId).isEqualTo("id_1_image")
     val imagesImagePng = ResourceProcessor.createEpubResource("images/image.png", "id1", 2)
     assertThat(imagesImagePng.newHref).isEqualTo("images/2_image.png")
     val veryLongPathImagePng = ResourceProcessor.createEpubResource(
