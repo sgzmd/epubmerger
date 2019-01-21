@@ -62,6 +62,7 @@ class EpubMergeEndToEndTest {
     val report = DefaultReportImpl(tempFile.name)
     EpubCheck(tempFile, report).doValidate()
 
+    // TODO: this must be 0 at some point
     assertThat(report.errorCount).isEqualTo(5)
   }
 
