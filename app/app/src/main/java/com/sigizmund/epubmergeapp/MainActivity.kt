@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
-import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -13,12 +12,8 @@ import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.github.angads25.filepicker.model.DialogConfigs
 import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
-import epubmerger.EpubProcessor
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.activityUiThreadWithContext
-import org.jetbrains.anko.doAsync
 import java.io.File
-import java.nio.file.Paths
 
 
 class MainActivity : AppCompatActivity() {
@@ -98,21 +93,6 @@ class MainActivity : AppCompatActivity() {
       extras.putStringArrayList(ReorderBooksActivity.SELECTED_FILES_KEY, ArrayList(files.asList()))
       intent.putExtras(extras)
       startActivity(intent)
-      //            doAsync {
-//                val paths = files.map { Paths.get(it) }.toList()
-//                val processor = EpubProcessor(paths)
-//                processor.mergeFiles()
-//                val title = processor.book.title
-//                val fileName = title.replace(' ', '_').replace('/', '_')
-//
-//                val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
-//                val resultPath = Paths.get(downloads.toString(), "$fileName.epub")
-//                processor.writeBook(resultPath)
-//
-//                activityUiThreadWithContext {
-//                    Toast.makeText(this, "Merged file saved to $resultPath", Toast.LENGTH_LONG).show()
-//                }
-//            }
     }
     picker.show()
   }

@@ -49,6 +49,9 @@ dependencies {
     implementation 'org.slf4j:slf4j-android:1.7.25'
     implementation 'com.github.angads25:filepicker:1.1.1'
     implementation('com.github.fondesa:kpermissions:1.0.0')
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
+
     implementation 'com.ernestoyaquello.dragdropswiperecyclerview:drag-drop-swipe-recyclerview:0.0.2'
 
     // https://mvnrepository.com/artifact/org.jetbrains.anko/anko-commons

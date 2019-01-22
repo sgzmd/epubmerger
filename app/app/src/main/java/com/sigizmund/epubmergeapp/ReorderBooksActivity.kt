@@ -7,15 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
-import epubmerger.EpubProcessor
+import epubmerger.BookMerger
+import kotlinx.android.synthetic.main.activity_reorder_books.*
 import nl.siegmann.epublib.epub.EpubReader
+import org.jetbrains.anko.activityUiThreadWithContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
-
-import kotlinx.android.synthetic.main.activity_reorder_books.*
-import org.jetbrains.anko.activityUiThreadWithContext
 
 class ReorderBooksActivity : AppCompatActivity() {
   private lateinit var adapter: BooksAdapter
@@ -58,16 +57,16 @@ class ReorderBooksActivity : AppCompatActivity() {
 
     merge_files_button.setOnClickListener {
       doAsync {
-        val processor = EpubProcessor(emptyList())
-        processor.mergeBooks(adapter.dataSet.map { it.book })
-        val title = processor.book.title
+        val processor = BookMerger(adapter.dataSet.map { it.book })
+        processor.mergeBooks()
+        val title = processor.result.title
         val fileName = title.replace(' ', '_').replace('/', '_')
 
         val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
         val resultPath = Paths.get(downloads.toString(), "$fileName.epub")
         processor.writeBook(resultPath)
 
-        activityUiThreadWithContext {        processor.mergeFiles()
+        activityUiThreadWithContext {
           Toast.makeText(this, "Merged file saved to $resultPath", Toast.LENGTH_LONG).show()
         }
       }

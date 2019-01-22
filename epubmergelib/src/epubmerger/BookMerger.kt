@@ -1,6 +1,7 @@
 package epubmerger
 
 import nl.siegmann.epublib.domain.*
+import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
@@ -135,6 +136,12 @@ class BookMerger(var epubs: List<Book>) {
 
   fun writeBook(path: Path) {
     EpubWriter().write(result, path.toFile().outputStream())
+  }
+
+  companion object {
+    fun createBook(bookPath: Path): Book? {
+      return EpubReader().readEpub(bookPath.toFile().inputStream())
+    }
   }
 }
 
