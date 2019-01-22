@@ -97,7 +97,5 @@ object ResourceProcessor {
 
     return EpubResource(href, bookIndex, newhref, resourceId)
   }
-
-
 }
 
