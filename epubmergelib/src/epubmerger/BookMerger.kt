@@ -138,6 +138,35 @@ class BookMerger(var epubs: List<Book>) {
     EpubWriter().write(result, path.toFile().outputStream())
   }
 
+  private var _mergedBookTitle: String? = null
+  var mergedBookTitle: String
+    // TODO some lock needed
+    get() {
+      if (_mergedBookTitle == null) {
+        _mergedBookTitle = ""
+      }
+
+      return _mergedBookTitle!!
+    }
+    set(value) {
+      _mergedBookTitle = value
+      result.metadata.titles.clear()
+      val allTitles = epubs.map { it.metadata.titles }.flatten<String?>()
+
+      result.metadata.titles.add(_mergedBookTitle)
+      result.metadata.titles.addAll(allTitles)
+    }
+
+  private var _author: String? = null
+  var mergedBookAuthor: String
+    get() {
+      return epubs.map { it.metadata.authors }.flatten<Author?>().distinct().joinToString()
+    }
+    set(value) {
+      result.metadata.authors.clear()
+      result.metadata.authors.add(Author(value))
+    }
+
   companion object {
     fun createBook(bookPath: Path): Book? {
       return EpubReader().readEpub(bookPath.toFile().inputStream())

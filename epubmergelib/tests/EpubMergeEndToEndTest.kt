@@ -3,6 +3,7 @@ package epubmerger
 import com.adobe.epubcheck.api.EpubCheck
 import com.adobe.epubcheck.util.DefaultReportImpl
 import com.google.common.truth.Truth.assertThat
+import nl.siegmann.epublib.domain.Author
 import nl.siegmann.epublib.epub.EpubReader
 import org.junit.Test
 import org.slf4j.LoggerFactory
@@ -65,6 +66,51 @@ class EpubMergeEndToEndTest {
     // TODO: this must be 0 at some point
     assertThat(report.errorCount).isEqualTo(5)
   }
+
+  @Test
+  fun titleTest() {
+    val files = listOf(
+        Paths.get("testdata/sample1.epub"),
+        Paths.get("testdata/sample2.epub"))
+    val epubMerger = BookMerger(files.map { EpubReader().readEpub(it.toFile().inputStream()) })
+    epubMerger.mergeBooks()
+
+    epubMerger.mergedBookTitle = "MergedBookTitle"
+
+    val tempFile = File.createTempFile("epubmerger-test", ".epub")
+    tempFile.deleteOnExit()
+    LOG.info(tempFile.absolutePath)
+
+    epubMerger.writeBook(Paths.get(tempFile.absolutePath))
+
+    val book = EpubReader().readEpub(tempFile.inputStream())
+    assertThat(book).isNotNull()
+    LOG.info("Book title is ${book.metadata.firstTitle}")
+    assertThat(book.metadata.firstTitle).isEqualTo("MergedBookTitle")
+  }
+
+  @Test
+  fun authorTest() {
+    val files = listOf(
+        Paths.get("testdata/sample1.epub"),
+        Paths.get("testdata/sample2.epub"))
+    val epubMerger = BookMerger(files.map { EpubReader().readEpub(it.toFile().inputStream()) })
+    epubMerger.mergeBooks()
+
+    epubMerger.mergedBookAuthor = "MyAuthor"
+
+    val tempFile = File.createTempFile("epubmerger-test", ".epub")
+    tempFile.deleteOnExit()
+    LOG.info(tempFile.absolutePath)
+
+    epubMerger.writeBook(Paths.get(tempFile.absolutePath))
+
+    val book = EpubReader().readEpub(tempFile.inputStream())
+    assertThat(book).isNotNull()
+    LOG.info("Book title is ${book.metadata.firstTitle}")
+    assertThat(book.metadata.authors).containsExactlyElementsIn(listOf(Author("MyAuthor")))
+  }
+
 
   @Test
   fun mergeRealSamples() {
