@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">EpubMergeApp</string>
+  <string name="app_name">EpubMergeApp</string>
+  <string name="metadata_book_title">Book title</string>
+  <string name="metadata_author">Author</string>
 </resources>
