@@ -2,4 +2,7 @@
   <string name="app_name">EpubMergeApp</string>
   <string name="metadata_book_title">Book title</string>
   <string name="metadata_author">Author</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
