@@ -31,10 +31,19 @@ class BookMerger(var epubs: List<Book>) {
           // TODO do something when there's no TOC
         }
       }
+
+      epub.spine.spineReferences.forEach {
+        val key = index to it.resource.href
+        if (!resources.containsKey(key)) {
+          throw RuntimeException("Resource ${it.resource.href} is not processed")
+        }
+
+        result.spine.addSpineReference(SpineReference(result.resources.getByHref(resources[key]?.newHref)))
+      }
     }
 
 
-    result.generateSpineFromTableOfContents()
+    // result.generateSpineFromTableOfContents()
     epubs.forEachIndexed { index, epub ->
       epub.spine.spineReferences.forEach { spr ->
         val key = index to spr.resource.href

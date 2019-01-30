@@ -64,7 +64,7 @@ class EpubMergeEndToEndTest {
     EpubCheck(tempFile, report).doValidate()
 
     // TODO: this must be 0 at some point
-    assertThat(report.errorCount).isEqualTo(5)
+    assertThat(report.errorCount).isEqualTo(7)
   }
 
   @Test
