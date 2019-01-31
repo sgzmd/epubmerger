@@ -3,24 +3,65 @@ package com.sigizmund.epubmergeapp
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import java.util.ArrayList
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
+import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
+import kotlinx.android.synthetic.main.fragment_reorder_books.*
+import nl.siegmann.epublib.epub.EpubReader
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import java.nio.file.Paths
+import java.util.*
 
 
-private const val SELECTED_FILES = "selected_files_key"
+const val SELECTED_FILES = "selected_files_key"
 
 class ReorderBooksFragment : Fragment() {
+  private val TAG = ReorderBooksFragment::class.java.name
   private var listener: OnFragmentInteractionListener? = null
   private lateinit var selectedFiles: ArrayList<String>
+  private lateinit var adapter: BooksAdapter
+
+
+  private val onItemDragListener = object : OnItemDragListener<BookEntry> {
+    override fun onItemDropped(initialPosition: Int, finalPosition: Int, item: BookEntry) {
+      Log.d(TAG, "onItemDragged(initialPosition=$initialPosition finalPosition=$finalPosition item=${item}")
+      val a = adapter.dataSet
+      Log.d(TAG, a.toString())
+    }
+
+    override fun onItemDragged(previousPosition: Int, newPosition: Int, item: BookEntry) {
+      Log.d(TAG, "onItemDragged(previousPosition=$previousPosition newPosition=$newPosition item=${item}")
+    }
+  }
+
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let { extras ->
       // SELECTED_FILES must be passed into this fragment
       selectedFiles = extras.getStringArrayList(SELECTED_FILES)!!
+
+      doAsync {
+        val bookEntries = selectedFiles
+          ?.map { Paths.get(it).toFile().inputStream() }
+          ?.map { EpubReader().readEpub(it) }.map { BookEntry(it) }
+
+        adapter = BooksAdapter(bookEntries)
+        uiThread {
+          bookList.adapter = adapter
+          bookList.layoutManager = LinearLayoutManager(it.context)
+          bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
+          bookList.dragListener = onItemDragListener
+        }
+      }
+
     }
   }
 
