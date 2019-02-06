@@ -8,10 +8,12 @@ import java.nio.file.Paths
 
 fun main(args: Array<String>) {
   if (args.size < 3) {
-    println("Usage: java -jar /path/to/jar /path/to/source/directory *.epub output.epub")
+    println("Usage: java -jar /path/to/jar /path/to/source/directory/*.epub output.epub")
     return
   }
-  val stream: DirectoryStream<Path> = Files.newDirectoryStream(Paths.get(args[0]), args[1])
+
+  val path = Paths.get(args[0])
+  val stream: DirectoryStream<Path> = Files.newDirectoryStream(path.parent, path.fileName.toString())
   val files = stream.toList().sorted()
   val ep = BookMerger(files.map { EpubReader().readEpub(it.toFile().inputStream()) })
   ep.mergeBooks()
