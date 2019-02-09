@@ -50,7 +50,9 @@ class BookMergeWizardActivity : AppCompatActivity(), ReorderBooksFragment.OnFrag
 
     viewPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager)
     selectedFiles = intent.extras.getStringArrayList(SELECTED_FILES)
-    viewPager.currentItem = 0
+
+    // For initial page it should be always disabled since this is the first page
+    buttonPrevious.isEnabled = false
   }
 
   private fun updateButtonsState(position: Int) {
