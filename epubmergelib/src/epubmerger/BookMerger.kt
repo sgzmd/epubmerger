@@ -14,8 +14,8 @@ class BookMerger(var epubs: List<Book>) {
   val TOC_TYPE = setOf("application/x-dtbncx+xml")
   val LOG = LoggerFactory.getLogger(BookMerger::class.java)
 
-  val result = Book()
-  val resources = HashMap<Pair<Int, String>, EpubResource>()
+  private val result = Book()
+  private val resources = HashMap<Pair<Int, String>, EpubResource>()
 
   fun mergeBooks() {
     LOG.info("Starting to merge ${epubs.size} books")

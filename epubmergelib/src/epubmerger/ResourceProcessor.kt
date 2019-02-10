@@ -6,6 +6,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Entities
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.net.URI
 import java.nio.file.Paths
 
@@ -59,7 +60,7 @@ object ResourceProcessor {
           continue
         }
 
-        LOG.info("processing element $it with attribute $attr='${it.attr(attr)}'")
+        LOG.debug("processing element $it with attribute $attr='${it.attr(attr)}'")
 
         val href = FullHref(it.attr(attr))
         if (!book.resources.containsByHref(href.href)) {
@@ -71,7 +72,7 @@ object ResourceProcessor {
         val res = book.resources.getByHref(href.href)
         val newEpubResource = createEpubResource(res.href, res.id, index)
         val withUpdatedHref = href.withUpdatedHref(newEpubResource.newHref!!)
-        LOG.info("Updating href to ${withUpdatedHref}")
+        LOG.debug("Updating href to ${withUpdatedHref}")
         it.attr(attr, withUpdatedHref)
       }
     }
@@ -88,7 +89,7 @@ object ResourceProcessor {
   internal fun createEpubResource(href: String, id: String, bookIndex: Int): EpubResource {
     val path = Paths.get(href)
     val newhref = if (path.parent != null)
-      "${path.parent}/${bookIndex}_${path.fileName}"
+      "${path.parent}${File.separator}${bookIndex}_${path.fileName}"
     else
       "${bookIndex}_${path.fileName}"
 

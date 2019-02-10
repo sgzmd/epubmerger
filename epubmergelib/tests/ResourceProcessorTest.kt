@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import nl.siegmann.epublib.epub.EpubReader
 import org.jsoup.Jsoup
 import org.junit.Test
+import java.io.File
 import java.nio.file.Paths
 
 class ResourceProcessorTest {
@@ -12,11 +13,11 @@ class ResourceProcessorTest {
     val imagePngResource = ResourceProcessor.createEpubResource("image.png", "id1", 1)
     assertThat(imagePngResource.newHref).isEqualTo("1_image.png")
     assertThat(imagePngResource.newId).isEqualTo("id_1_image")
-    val imagesImagePng = ResourceProcessor.createEpubResource("images/image.png", "id1", 2)
-    assertThat(imagesImagePng.newHref).isEqualTo("images/2_image.png")
+    val imagesImagePng = ResourceProcessor.createEpubResource("images${File.separator}image.png", "id1", 2)
+    assertThat(imagesImagePng.newHref).isEqualTo("images${File.separator}2_image.png")
     val veryLongPathImagePng = ResourceProcessor.createEpubResource(
         "very/long/path/image.png", "1", 1)
-    assertThat(veryLongPathImagePng.newHref).isEqualTo("very/long/path/1_image.png")
+    assertThat(veryLongPathImagePng.newHref).isEqualTo(Paths.get("very", "long", "path", "1_image.png").toString())
   }
 
   @Test

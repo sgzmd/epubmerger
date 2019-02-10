@@ -42,12 +42,12 @@ class EpubMergeEndToEndTest {
     )
 
     val expectedHrefs = listOf("toc.ncx",
-        "Text/0_Section0002.xhtml",
-        "Text/0_Section0003.xhtml",
-        "Text/1_Section0002.xhtml",
-        "Text/1_Section0003.xhtml",
-        "Text/0_Section0001.xhtml",
-        "Text/1_Section0001.xhtml"
+        "Text${File.separator}0_Section0002.xhtml",
+        "Text${File.separator}0_Section0003.xhtml",
+        "Text${File.separator}1_Section0002.xhtml",
+        "Text${File.separator}1_Section0003.xhtml",
+        "Text${File.separator}0_Section0001.xhtml",
+        "Text${File.separator}1_Section0001.xhtml"
     )
 
     assertThat(book.resources.all.map { it.id }).containsExactlyElementsIn(expectedResourceIds)
