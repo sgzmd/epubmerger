@@ -167,6 +167,12 @@ class BookMerger(var epubs: List<Book>) {
       result.metadata.authors.add(Author(value))
     }
 
+  var metadata: BookMetadata? = null
+    set(value) {
+      mergedBookAuthor = value?.author!!
+      mergedBookTitle = value?.title!!
+    }
+
   companion object {
     fun createBook(bookPath: Path): Book? {
       return EpubReader().readEpub(bookPath.toFile().inputStream())
