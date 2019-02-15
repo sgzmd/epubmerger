@@ -18,19 +18,19 @@ class BookMergeWizardActivity :
   ReorderBooksFragment.OnFragmentInteractionListener,
   BookMetaFragment.OnFragmentInteractionListener  {
 
-  private lateinit var title: String
-  private lateinit var author: String
-
-  override fun onMetadataUpdated(title: String, author: String) {
-    this.title = title
-    this.author = author
-  }
+  private lateinit var model: MergedBookModel? = null
 
   private val TAG = "BookMergeWizardActivity"
 
   override fun onFragmentInteraction(uri: Uri) {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
+
+  override fun onMetadataUpdated(title: String, author: String) {
+    model?.bookTitle = title
+    model?.bookAuthor = author
+  }
+
 
   lateinit var selectedFiles: ArrayList<String>
 
@@ -63,6 +63,7 @@ class BookMergeWizardActivity :
 
     viewPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager)
     selectedFiles = intent.extras.getStringArrayList(SELECTED_FILES)
+    model = MergedBookModel(selectedFiles)
 
     // For initial page it should be always disabled since this is the first page
     buttonPrevious.isEnabled = false

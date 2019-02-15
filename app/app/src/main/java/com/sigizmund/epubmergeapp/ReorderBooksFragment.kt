@@ -43,27 +43,17 @@ class ReorderBooksFragment : Fragment() {
   }
 
 
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let { extras ->
       // SELECTED_FILES must be passed into this fragment
-      selectedFiles = extras.getStringArrayList(SELECTED_FILES)!!
-
-      doAsync {
-        val bookEntries = selectedFiles?.map { fileName ->
-          BookEntry(EpubReader().readEpub(Paths.get(fileName).toFile().inputStream()), fileName)
-        }
-
-        adapter = BooksAdapter(bookEntries)
-        uiThread {
-          bookList.adapter = adapter
-          bookList.layoutManager = LinearLayoutManager(it.context)
-          bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
-          bookList.dragListener = onItemDragListener
-        }
-      }
-
+      val entries = extras.getParcelableArrayList<BookEntry>(SELECTED_FILES)
+      adapter = BooksAdapter(entries)
+      // selectedFiles = extras.getStringArrayList(SELECTED_FILES)!!
+      bookList.adapter = adapter
+      bookList.layoutManager = LinearLayoutManager(context)
+      bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
+      bookList.dragListener = onItemDragListener
     }
   }
 
@@ -111,20 +101,11 @@ class ReorderBooksFragment : Fragment() {
   }
 
   companion object {
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReorderBooksFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     @JvmStatic
-    fun newInstance(selectedFiles: ArrayList<String>) =
+    fun newInstance(model: ReadOnlyModel) =
       ReorderBooksFragment().apply {
         arguments = Bundle().apply {
-          putStringArrayList(SELECTED_FILES, selectedFiles)
+          putParcelableArrayList(SELECTED_FILES, ArrayList(model.bookEntries))
         }
       }
   }
