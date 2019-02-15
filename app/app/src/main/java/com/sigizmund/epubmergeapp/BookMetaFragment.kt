@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.activity_metadata.*
 import kotlinx.android.synthetic.main.fragment_book_meta.*
 
 
@@ -37,6 +38,14 @@ class BookMetaFragment : Fragment() {
 
     bookAuthor.setText(author)
     bookTitle.setText(title)
+
+    val focusChangeListener: (View, Boolean) -> Unit = { v, hasFocus ->
+      if (!hasFocus) {
+        // if listener is null then fragment wasn't set up correctly
+        listener!!.onMetadataUpdated(bookTitle.text.toString(), bookAuthor.text.toString())
+      }
+    }
+    bookTitle.setOnFocusChangeListener(focusChangeListener)
   }
 
   override fun onCreateView(
@@ -47,10 +56,6 @@ class BookMetaFragment : Fragment() {
     return inflater.inflate(R.layout.fragment_book_meta, container, false)
   }
 
-  // TODO: Rename method, update argument and hook method into UI event
-  fun onButtonPressed(uri: Uri) {
-    listener?.onFragmentInteraction(uri)
-  }
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -78,8 +83,7 @@ class BookMetaFragment : Fragment() {
    * for more information.
    */
   interface OnFragmentInteractionListener {
-    // TODO: Update argument type and name
-    fun onFragmentInteraction(uri: Uri)
+    fun onMetadataUpdated(title: String, author: String)
   }
 
   companion object {
@@ -87,17 +91,17 @@ class BookMetaFragment : Fragment() {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param title Parameter 1.
+     * @param author Parameter 2.
      * @return A new instance of fragment BookMetaFragment.
      */
     // TODO: Rename and change types and number of parameters
     @JvmStatic
-    fun newInstance(param1: String, param2: String) =
+    fun newInstance(title: String, author: String) =
       BookMetaFragment().apply {
         arguments = Bundle().apply {
-          putString(ARG_TITLE, param1)
-          putString(ARG_AUTHOR, param2)
+          putString(ARG_TITLE, title)
+          putString(ARG_AUTHOR, author)
         }
       }
   }

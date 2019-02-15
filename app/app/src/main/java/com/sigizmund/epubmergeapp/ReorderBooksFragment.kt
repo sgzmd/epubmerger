@@ -33,6 +33,8 @@ class ReorderBooksFragment : Fragment() {
       Log.d(TAG, "onItemDragged(initialPosition=$initialPosition finalPosition=$finalPosition item=${item}")
       val a = adapter.dataSet
       Log.d(TAG, a.toString())
+
+
     }
 
     override fun onItemDragged(previousPosition: Int, newPosition: Int, item: BookEntry) {
@@ -49,9 +51,9 @@ class ReorderBooksFragment : Fragment() {
       selectedFiles = extras.getStringArrayList(SELECTED_FILES)!!
 
       doAsync {
-        val bookEntries = selectedFiles
-          ?.map { Paths.get(it).toFile().inputStream() }
-          ?.map { EpubReader().readEpub(it) }.map { BookEntry(it) }
+        val bookEntries = selectedFiles?.map { fileName ->
+          BookEntry(EpubReader().readEpub(Paths.get(fileName).toFile().inputStream()), fileName)
+        }
 
         adapter = BooksAdapter(bookEntries)
         uiThread {

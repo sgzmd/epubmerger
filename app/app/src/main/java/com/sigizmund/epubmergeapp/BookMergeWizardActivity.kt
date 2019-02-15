@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
@@ -12,7 +13,19 @@ import java.util.*
 
 private const val NUM_PAGES = 3
 
-class BookMergeWizardActivity : AppCompatActivity(), ReorderBooksFragment.OnFragmentInteractionListener {
+class BookMergeWizardActivity :
+  AppCompatActivity(),
+  ReorderBooksFragment.OnFragmentInteractionListener,
+  BookMetaFragment.OnFragmentInteractionListener  {
+
+  private lateinit var title: String
+  private lateinit var author: String
+
+  override fun onMetadataUpdated(title: String, author: String) {
+    this.title = title
+    this.author = author
+  }
+
   private val TAG = "BookMergeWizardActivity"
 
   override fun onFragmentInteraction(uri: Uri) {
@@ -77,15 +90,15 @@ class BookMergeWizardActivity : AppCompatActivity(), ReorderBooksFragment.OnFrag
   private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     override fun getCount(): Int = NUM_PAGES
 
-    override fun getItem(position: Int): ReorderBooksFragment {
+    override fun getItem(position: Int): Fragment {
       Log.d(TAG, "getItem($position)")
-      val item: ReorderBooksFragment = when (position) {
+      val item: Fragment = when (position) {
         0 -> {
           ReorderBooksFragment.newInstance(selectedFiles)
         }
 
         1 -> {
-          ReorderBooksFragment.newInstance(selectedFiles)
+          BookMetaFragment.newInstance("Title", "Author")
         }
 
         2 -> {
