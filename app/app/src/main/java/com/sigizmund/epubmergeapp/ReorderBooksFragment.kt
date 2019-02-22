@@ -11,11 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
-import kotlinx.android.synthetic.main.fragment_reorder_books.*
-import nl.siegmann.epublib.epub.EpubReader
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import java.nio.file.Paths
+
 import java.util.*
 
 
@@ -24,8 +20,8 @@ const val SELECTED_FILES = "selected_files_key"
 class ReorderBooksFragment : Fragment() {
   private val TAG = ReorderBooksFragment::class.java.name
   private var listener: OnFragmentInteractionListener? = null
-  private lateinit var selectedFiles: ArrayList<String>
   private lateinit var adapter: BooksAdapter
+  private lateinit var bookList: DragDropSwipeRecyclerView
 
 
   private val onItemDragListener = object : OnItemDragListener<BookEntry> {
@@ -49,11 +45,6 @@ class ReorderBooksFragment : Fragment() {
       // SELECTED_FILES must be passed into this fragment
       val entries = extras.getParcelableArrayList<BookEntry>(SELECTED_FILES)
       adapter = BooksAdapter(entries)
-      // selectedFiles = extras.getStringArrayList(SELECTED_FILES)!!
-      bookList.adapter = adapter
-      bookList.layoutManager = LinearLayoutManager(context)
-      bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
-      bookList.dragListener = onItemDragListener
     }
   }
 
@@ -62,7 +53,16 @@ class ReorderBooksFragment : Fragment() {
     savedInstanceState: Bundle?
   ): View? {
     // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_reorder_books, container, false)
+    val view = inflater.inflate(R.layout.fragment_reorder_books, container, false)
+    bookList = view.findViewById(R.id.bookList)
+
+    bookList.adapter = adapter
+    bookList.layoutManager = LinearLayoutManager(context)
+    bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
+    bookList.dragListener = onItemDragListener
+
+
+    return view
   }
 
   // TODO: Rename method, update argument and hook method into UI event

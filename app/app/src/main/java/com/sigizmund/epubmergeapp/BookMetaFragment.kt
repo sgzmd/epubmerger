@@ -1,14 +1,12 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.activity_metadata.*
-import kotlinx.android.synthetic.main.fragment_book_meta.*
+import android.widget.EditText
+import androidx.fragment.app.Fragment
 
 
 private const val ARG_TITLE = "book_meta_title"
@@ -28,6 +26,8 @@ class BookMetaFragment : Fragment() {
   private var title: String? = null
   private var author: String? = null
   private var listener: OnFragmentInteractionListener? = null
+  private lateinit var bookAuthor: EditText
+  private lateinit var bookTitle: EditText
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -35,6 +35,17 @@ class BookMetaFragment : Fragment() {
       title = it.getString(ARG_TITLE)
       author = it.getString(ARG_AUTHOR)
     }
+
+  }
+
+  override fun onCreateView(
+    inflater: LayoutInflater, container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
+    val view = inflater.inflate(R.layout.fragment_book_meta, container, false)
+
+    bookAuthor = view.findViewById(R.id.bookAuthor)
+    bookTitle = view.findViewById(R.id.bookTitle)
 
     bookAuthor.setText(author)
     bookTitle.setText(title)
@@ -46,14 +57,8 @@ class BookMetaFragment : Fragment() {
       }
     }
     bookTitle.setOnFocusChangeListener(focusChangeListener)
-  }
 
-  override fun onCreateView(
-    inflater: LayoutInflater, container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_book_meta, container, false)
+    return view
   }
 
 

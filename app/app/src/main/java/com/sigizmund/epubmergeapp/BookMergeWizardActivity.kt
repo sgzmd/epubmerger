@@ -18,7 +18,7 @@ class BookMergeWizardActivity :
   ReorderBooksFragment.OnFragmentInteractionListener,
   BookMetaFragment.OnFragmentInteractionListener  {
 
-  private lateinit var model: MergedBookModel? = null
+  private var model: MergedBookModel? = null
 
   private val TAG = "BookMergeWizardActivity"
 
@@ -95,7 +95,7 @@ class BookMergeWizardActivity :
       Log.d(TAG, "getItem($position)")
       val item: Fragment = when (position) {
         0 -> {
-          ReorderBooksFragment.newInstance(selectedFiles)
+          ReorderBooksFragment.newInstance(model as ReadOnlyModel)
         }
 
         1 -> {
@@ -103,7 +103,7 @@ class BookMergeWizardActivity :
         }
 
         2 -> {
-          ReorderBooksFragment.newInstance(selectedFiles)
+          ReorderBooksFragment.newInstance(model as ReadOnlyModel)
         }
         else -> {
           throw RuntimeException("Unsupported index")
