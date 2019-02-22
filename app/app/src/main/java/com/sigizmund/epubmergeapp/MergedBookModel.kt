@@ -1,5 +1,6 @@
 package com.sigizmund.epubmergeapp
 
+import android.util.Log
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.epub.EpubReader
 import java.nio.file.Paths
@@ -13,18 +14,42 @@ interface ReadOnlyModel {
 }
 
 class MergedBookModel(var sourceFiles: List<String>) : ReadOnlyModel {
-  private var _books: List<Book> = sourceFiles.map { EpubReader().readEpub(Paths.get(it).toFile().inputStream()) }
-  private var _bookTitle: String = _books.map { it.title }.joinToString { ", " }
+  private val TAG = "MergedBookModel"
 
-  // Below code is, essentially, a dirty hack to get _some_ author for the merged book.
-  // Largely this is not problem since it will be most likely edited by the user.
-  private var _bookAuthor: String = _books
-    .asSequence()
-    .map { it.metadata.authors }
-    .flatten()
-    .map { "${it.firstname} ${it.lastname}" }
-    .toSet()
-    .joinToString { ", " }
+  private var _books: List<Book> = sourceFiles.map { EpubReader().readEpub(Paths.get(it).toFile().inputStream()) }
+  private lateinit var _bookTitle: String
+  private var _defaultTitleUsed = true
+
+  private lateinit var _bookAuthor: String
+  private var _defaultAuthorUsed = true
+
+  init {
+    updateDefaultTitle()
+    updateDefaultAuthor()
+  }
+
+  private fun updateDefaultTitle() {
+    val titles = _books.map { it.title }
+    _bookTitle = if (titles.all { it.isBlank() }) {
+      "Sample Title"
+    } else {
+      titles.filter { !it.isBlank() }.joinToString(", ")
+    }
+
+    Log.d(TAG, "Book title: $_bookTitle")
+  }
+
+  private fun updateDefaultAuthor() {
+    var authors =
+      _books.map { it.metadata.authors }.flatten().map { "${it.firstname} ${it.lastname}".trim() }.toSortedSet()
+    _bookAuthor = if (authors.all { it.isBlank() }) {
+      "Sample Author"
+    } else {
+      authors.filter { !it.isBlank() }.joinToString(", ")
+    }
+
+    Log.d(TAG, "Book Author: $_bookAuthor")
+  }
 
   override var bookTitle: String
   get() {
@@ -32,6 +57,7 @@ class MergedBookModel(var sourceFiles: List<String>) : ReadOnlyModel {
   }
   set(value) {
     _bookTitle = value
+    _defaultTitleUsed = false
   }
 
   override var bookAuthor: String
@@ -40,6 +66,7 @@ class MergedBookModel(var sourceFiles: List<String>) : ReadOnlyModel {
   }
   set(value) {
     _bookAuthor = value
+    _defaultAuthorUsed = false
   }
 
   override var books: List<Book> = _books
@@ -48,9 +75,19 @@ class MergedBookModel(var sourceFiles: List<String>) : ReadOnlyModel {
   /**
    * When books order has changed, this method will be called.
    */
-  private fun updateBooksOrder(entries: List<BookEntry>) {
+  fun updateBooksOrder(entries: List<BookEntry>) {
     _books = entries.map { it.book }
     sourceFiles = entries.map { it.fileName }
+
+    Log.d(TAG, "Books order has changed: ${_books.map { it.title }.joinToString(", ")}")
+
+    if (_defaultTitleUsed) {
+      updateDefaultTitle()
+    }
+
+    if (_defaultAuthorUsed) {
+      updateDefaultAuthor()
+    }
   }
 
   override var bookEntries: List<BookEntry>

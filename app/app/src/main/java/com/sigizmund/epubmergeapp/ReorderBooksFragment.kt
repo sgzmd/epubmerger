@@ -1,7 +1,6 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
-
 import java.util.*
 
 
@@ -19,7 +17,7 @@ const val SELECTED_FILES = "selected_files_key"
 
 class ReorderBooksFragment : Fragment() {
   private val TAG = ReorderBooksFragment::class.java.name
-  private var listener: OnFragmentInteractionListener? = null
+  private var listener: BooksReoderListener? = null
   private lateinit var adapter: BooksAdapter
   private lateinit var bookList: DragDropSwipeRecyclerView
 
@@ -30,7 +28,7 @@ class ReorderBooksFragment : Fragment() {
       val a = adapter.dataSet
       Log.d(TAG, a.toString())
 
-
+      listener?.onBooksOrderChanged(adapter.dataSet)
     }
 
     override fun onItemDragged(previousPosition: Int, newPosition: Int, item: BookEntry) {
@@ -61,18 +59,12 @@ class ReorderBooksFragment : Fragment() {
     bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
     bookList.dragListener = onItemDragListener
 
-
     return view
-  }
-
-  // TODO: Rename method, update argument and hook method into UI event
-  fun onButtonPressed(uri: Uri) {
-    listener?.onFragmentInteraction(uri)
   }
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
-    if (context is OnFragmentInteractionListener) {
+    if (context is BooksReoderListener) {
       listener = context
     } else {
       throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
@@ -84,20 +76,9 @@ class ReorderBooksFragment : Fragment() {
     listener = null
   }
 
-  /**
-   * This interface must be implemented by activities that contain this
-   * fragment to allow an interaction in this fragment to be communicated
-   * to the activity and potentially other fragments contained in that
-   * activity.
-   *
-   *
-   * See the Android Training lesson [Communicating with Other Fragments]
-   * (http://developer.android.com/training/basics/fragments/communicating.html)
-   * for more information.
-   */
-  interface OnFragmentInteractionListener {
-    // TODO: Update argument type and name
-    fun onFragmentInteraction(uri: Uri)
+
+  interface BooksReoderListener {
+    fun onBooksOrderChanged(entries: List<BookEntry>)
   }
 
   companion object {

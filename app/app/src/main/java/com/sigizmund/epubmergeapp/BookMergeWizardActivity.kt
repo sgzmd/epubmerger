@@ -1,6 +1,5 @@
 package com.sigizmund.epubmergeapp
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -15,16 +14,16 @@ private const val NUM_PAGES = 3
 
 class BookMergeWizardActivity :
   AppCompatActivity(),
-  ReorderBooksFragment.OnFragmentInteractionListener,
+  ReorderBooksFragment.BooksReoderListener,
   BookMetaFragment.OnFragmentInteractionListener  {
+
+  override fun onBooksOrderChanged(entries: List<BookEntry>) {
+    model?.updateBooksOrder(entries)
+  }
 
   private var model: MergedBookModel? = null
 
   private val TAG = "BookMergeWizardActivity"
-
-  override fun onFragmentInteraction(uri: Uri) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
 
   override fun onMetadataUpdated(title: String, author: String) {
     model?.bookTitle = title
@@ -99,7 +98,7 @@ class BookMergeWizardActivity :
         }
 
         1 -> {
-          BookMetaFragment.newInstance("Title", "Author")
+          BookMetaFragment.newInstance(model as ReadOnlyModel)
         }
 
         2 -> {

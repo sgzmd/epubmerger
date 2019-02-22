@@ -102,11 +102,11 @@ class BookMetaFragment : Fragment() {
      */
     // TODO: Rename and change types and number of parameters
     @JvmStatic
-    fun newInstance(title: String, author: String) =
+    fun newInstance(model: ReadOnlyModel) =
       BookMetaFragment().apply {
         arguments = Bundle().apply {
-          putString(ARG_TITLE, title)
-          putString(ARG_AUTHOR, author)
+          putString(ARG_TITLE, model.bookTitle)
+          putString(ARG_AUTHOR, model.bookAuthor)
         }
       }
   }
