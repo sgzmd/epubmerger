@@ -1,4 +1,10 @@
 package com.sigizmund.epubmergeapp
 
-class BooksViewModel {
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+
+class BooksViewModel : ViewModel() {
+  private val titleLiveData = object : LiveData<String>() {
+
+  }
 }
