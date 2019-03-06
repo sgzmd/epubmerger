@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
 import java.util.*
@@ -18,20 +19,20 @@ class BookMergeWizardActivity :
   BookMetaFragment.OnFragmentInteractionListener  {
 
   override fun onBooksOrderChanged(entries: List<BookEntry>) {
-    model?.updateBooksOrder(entries)
+    // model?.updateBooksOrder(entries)
+    bookViewModel.bookEntries?.postValue(entries)
   }
-
-  private var model: MergedBookModel? = null
 
   private val TAG = "BookMergeWizardActivity"
 
   override fun onMetadataUpdated(title: String, author: String) {
-    model?.bookTitle = title
-    model?.bookAuthor = author
+    bookViewModel.bookTitle.postValue(title)
+    bookViewModel.bookAuthor.postValue(author)
   }
 
 
   lateinit var selectedFiles: ArrayList<String>
+  private lateinit var bookViewModel: BooksViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -62,10 +63,15 @@ class BookMergeWizardActivity :
 
     viewPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager)
     selectedFiles = intent.extras.getStringArrayList(SELECTED_FILES)
-    model = MergedBookModel(selectedFiles)
 
     // For initial page it should be always disabled since this is the first page
     buttonPrevious.isEnabled = false
+
+    this.bookViewModel = ViewModelProviders.of(
+      this,
+      BooksViewModel.BooksViewModelFactory(selectedFiles)
+    )[BooksViewModel::class.java]
+
   }
 
   private fun updateButtonsState(position: Int) {
@@ -94,15 +100,15 @@ class BookMergeWizardActivity :
       Log.d(TAG, "getItem($position)")
       val item: Fragment = when (position) {
         0 -> {
-          ReorderBooksFragment.newInstance(model as ReadOnlyModel)
+          ReorderBooksFragment.newInstance(selectedFiles)
         }
 
         1 -> {
-          BookMetaFragment.newInstance(model as ReadOnlyModel)
+          BookMetaFragment.newInstance(selectedFiles)
         }
 
         2 -> {
-          ReorderBooksFragment.newInstance(model as ReadOnlyModel)
+          ReorderBooksFragment.newInstance(selectedFiles)
         }
         else -> {
           throw RuntimeException("Unsupported index")

@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import java.util.*
 
 
 private const val ARG_TITLE = "book_meta_title"
@@ -29,13 +32,17 @@ class BookMetaFragment : Fragment() {
   private lateinit var bookAuthor: EditText
   private lateinit var bookTitle: EditText
 
+  private lateinit var model: BooksViewModel
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let {
-      title = it.getString(ARG_TITLE)
-      author = it.getString(ARG_AUTHOR)
+      var entries = it.getStringArrayList(SELECTED_FILES)
+      model = ViewModelProviders.of(
+        requireActivity(),
+        BooksViewModel.BooksViewModelFactory(entries)
+      )[BooksViewModel::class.java]
     }
-
   }
 
   override fun onCreateView(
@@ -47,8 +54,21 @@ class BookMetaFragment : Fragment() {
     bookAuthor = view.findViewById(R.id.bookAuthor)
     bookTitle = view.findViewById(R.id.bookTitle)
 
-    bookAuthor.setText(author)
-    bookTitle.setText(title)
+    bookAuthor.setText(model.bookAuthor.value)
+    bookTitle.setText(model.bookTitle.value)
+
+    model.bookAuthor.observe(this, Observer {
+      bookAuthor.setText(it)
+    })
+
+    model.bookTitle.observe(this, Observer {
+      bookTitle.setText(it)
+    })
+
+//    model.bookEntries?.observe(this, Observer {
+//      bookAuthor.setText(model.bookAuthor.value)
+//      bookTitle.setText(model.bookTitle.value)
+//    })
 
     val focusChangeListener: (View, Boolean) -> Unit = { v, hasFocus ->
       if (!hasFocus) {
@@ -102,11 +122,10 @@ class BookMetaFragment : Fragment() {
      */
     // TODO: Rename and change types and number of parameters
     @JvmStatic
-    fun newInstance(model: ReadOnlyModel) =
+    fun newInstance(model: ArrayList<String>) =
       BookMetaFragment().apply {
         arguments = Bundle().apply {
-          putString(ARG_TITLE, model.bookTitle)
-          putString(ARG_AUTHOR, model.bookAuthor)
+          putStringArrayList(SELECTED_FILES, model)
         }
       }
   }

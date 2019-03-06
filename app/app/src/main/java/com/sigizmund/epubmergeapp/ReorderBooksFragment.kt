@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
@@ -21,6 +22,8 @@ class ReorderBooksFragment : Fragment() {
   private lateinit var adapter: BooksAdapter
   private lateinit var bookList: DragDropSwipeRecyclerView
 
+  private lateinit var model: BooksViewModel
+
 
   private val onItemDragListener = object : OnItemDragListener<BookEntry> {
     override fun onItemDropped(initialPosition: Int, finalPosition: Int, item: BookEntry) {
@@ -29,6 +32,8 @@ class ReorderBooksFragment : Fragment() {
       Log.d(TAG, a.toString())
 
       listener?.onBooksOrderChanged(adapter.dataSet)
+
+      model.bookEntries?.postValue(adapter.dataSet)
     }
 
     override fun onItemDragged(previousPosition: Int, newPosition: Int, item: BookEntry) {
@@ -41,8 +46,16 @@ class ReorderBooksFragment : Fragment() {
     super.onCreate(savedInstanceState)
     arguments?.let { extras ->
       // SELECTED_FILES must be passed into this fragment
-      val entries = extras.getParcelableArrayList<BookEntry>(SELECTED_FILES)
-      adapter = BooksAdapter(entries)
+      val entries = extras.getStringArrayList(SELECTED_FILES)
+      model = ViewModelProviders.of(
+        requireActivity(),
+        BooksViewModel.BooksViewModelFactory(entries)
+      )[BooksViewModel::class.java]
+
+      adapter = BooksAdapter(ArrayList<BookEntry>())
+      model.bookEntries?.observe(this, androidx.lifecycle.Observer { entries ->
+        adapter.dataSet = entries
+      })
     }
   }
 
@@ -83,10 +96,10 @@ class ReorderBooksFragment : Fragment() {
 
   companion object {
     @JvmStatic
-    fun newInstance(model: ReadOnlyModel) =
+    fun newInstance(selectedFiles: ArrayList<String>) =
       ReorderBooksFragment().apply {
         arguments = Bundle().apply {
-          putParcelableArrayList(SELECTED_FILES, ArrayList(model.bookEntries))
+          putStringArrayList(SELECTED_FILES, selectedFiles)
         }
       }
   }
