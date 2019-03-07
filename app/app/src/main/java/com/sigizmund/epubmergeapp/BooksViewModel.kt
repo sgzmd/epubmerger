@@ -1,5 +1,6 @@
 package com.sigizmund.epubmergeapp
 
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -43,10 +44,9 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
     get() {
       if (internalBookEntries == null || internalBookEntries?.hasBeenModified != true) {
         internalBookEntries = DefaultLiveData(listOf<BookEntry>())
-        doAsync {
-          val entries = sourceFiles.map { createBookEntry(it) }
-          internalBookEntries?.postValue(entries)
-        }
+
+        val entries = sourceFiles.map { createBookEntry(it) }
+        internalBookEntries?.setValue(entries)
       }
 
       return internalBookEntries

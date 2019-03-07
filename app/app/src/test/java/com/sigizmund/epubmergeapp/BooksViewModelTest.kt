@@ -1,6 +1,12 @@
 package com.sigizmund.epubmergeapp
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.Observer
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import nl.siegmann.epublib.domain.Book
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -17,14 +23,14 @@ class BooksViewModelTest {
   val instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
   class TestableBooksViewModel(sourceFiles: List<String>) : BooksViewModel(sourceFiles) {
-    override fun createBookEntry(it: String): BookEntry {
-      val mockEntry = Mockito.mock(BookEntry::class.java)
-      `when`(mockEntry.author).thenReturn(listOf("Test Author1", "Test Author 2"))
-      `when`(mockEntry.title).thenReturn("Test Title")
-      `when`(mockEntry.fileName).thenReturn(it)
-      `when`(mockEntry.book).thenReturn((mock(Book::class.java)))
+    override fun createBookEntry(filePath: String): BookEntry {
+      val entry = mock<BookEntry> {
+        on { author } doReturn listOf("Test Author1", "Test Author 2")
+        on { title }  doReturn "Test Title " + filePath
+        on { fileName } doReturn filePath
+      }
 
-      return mockEntry
+      return entry
     }
   }
 
@@ -33,11 +39,12 @@ class BooksViewModelTest {
   @Before
   fun setUp() {
     booksViewModel = TestableBooksViewModel(listOf("file1.epub", "file2.epub"))
-    /* val entries = */ booksViewModel.bookEntries
   }
 
   @Test
   fun smokeTest() {
-    assertEquals("Test Title", booksViewModel.bookTitle.value)
+    assertEquals(
+      "Test Title file1.epub, Test Title file2.epub",
+      booksViewModel.bookTitle.value)
   }
 }
