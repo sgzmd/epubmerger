@@ -9,7 +9,7 @@ import nl.siegmann.epublib.epub.EpubReader
 import org.jetbrains.anko.doAsync
 import java.nio.file.Paths
 
-class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
+open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
   private val TAG = "BooksViewModel"
 
   class BooksViewModelFactory(var sourceFiles: List<String>) : ViewModelProvider.Factory {
@@ -17,6 +17,9 @@ class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
       return BooksViewModel(sourceFiles) as T
     }
   }
+
+  open fun createBookEntry(it: String) =
+    BookEntry(EpubReader().readEpub(Paths.get(it).toFile().inputStream()), it)
 
   class DefaultLiveData<T>(val defaultValue: T) : MediatorLiveData<T>() {
     private var hasBeenModified = false
@@ -40,7 +43,7 @@ class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
       if (internalBookEntries == null) {
         internalBookEntries = MutableLiveData()
         doAsync {
-          val entries = sourceFiles.map { BookEntry(EpubReader().readEpub(Paths.get(it).toFile().inputStream()), it) }
+          val entries = sourceFiles.map { createBookEntry(it) }
           internalBookEntries?.postValue(entries)
         }
       }
