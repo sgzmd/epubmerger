@@ -22,7 +22,8 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
     BookEntry(EpubReader().readEpub(Paths.get(it).toFile().inputStream()), it)
 
   class DefaultLiveData<T>(val defaultValue: T) : MediatorLiveData<T>() {
-    private var hasBeenModified = false
+    var hasBeenModified = false
+
     override fun setValue(value: T) {
       hasBeenModified = true
       super.setValue(value)
@@ -34,14 +35,14 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
     }
   }
 
-  private var internalBookEntries: MutableLiveData<List<BookEntry>>? = null
+  private var internalBookEntries: DefaultLiveData<List<BookEntry>>? = null
   private var _bookTitle: MediatorLiveData<String>? = null
   private var _bookAuthor: MediatorLiveData<String>? = null
 
   var bookEntries: MutableLiveData<List<BookEntry>>? = null
     get() {
-      if (internalBookEntries == null) {
-        internalBookEntries = MutableLiveData()
+      if (internalBookEntries == null || internalBookEntries?.hasBeenModified != true) {
+        internalBookEntries = DefaultLiveData(listOf<BookEntry>())
         doAsync {
           val entries = sourceFiles.map { createBookEntry(it) }
           internalBookEntries?.postValue(entries)

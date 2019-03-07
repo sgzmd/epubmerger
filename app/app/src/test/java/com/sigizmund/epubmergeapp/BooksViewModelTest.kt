@@ -1,14 +1,20 @@
 package com.sigizmund.epubmergeapp
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import nl.siegmann.epublib.domain.Book
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
+
 class BooksViewModelTest {
+  @Rule
+  @JvmField
+  val instantTaskExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
   class TestableBooksViewModel(sourceFiles: List<String>) : BooksViewModel(sourceFiles) {
     override fun createBookEntry(it: String): BookEntry {
@@ -27,6 +33,7 @@ class BooksViewModelTest {
   @Before
   fun setUp() {
     booksViewModel = TestableBooksViewModel(listOf("file1.epub", "file2.epub"))
+    /* val entries = */ booksViewModel.bookEntries
   }
 
   @Test
