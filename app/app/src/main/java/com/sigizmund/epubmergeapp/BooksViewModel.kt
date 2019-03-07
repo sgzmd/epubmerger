@@ -18,6 +18,19 @@ class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
     }
   }
 
+  class DefaultLiveData<T>(val defaultValue: T) : MediatorLiveData<T>() {
+    private var hasBeenModified = false
+    override fun setValue(value: T) {
+      hasBeenModified = true
+      super.setValue(value)
+    }
+
+    override fun postValue(value: T) {
+      hasBeenModified = true
+      super.postValue(value)
+    }
+  }
+
   private var internalBookEntries: MutableLiveData<List<BookEntry>>? = null
   private var _bookTitle: MediatorLiveData<String>? = null
   private var _bookAuthor: MediatorLiveData<String>? = null
