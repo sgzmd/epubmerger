@@ -4,6 +4,7 @@ import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import nl.siegmann.epublib.epub.EpubReader
@@ -37,8 +38,8 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
   }
 
   private var internalBookEntries: DefaultLiveData<List<BookEntry>>? = null
-  private var _bookTitle: MediatorLiveData<String>? = null
-  private var _bookAuthor: MediatorLiveData<String>? = null
+  private var _bookTitle: DefaultLiveData<String>? = null
+  private var _bookAuthor: DefaultLiveData<String>? = null
 
   var bookEntries: MutableLiveData<List<BookEntry>>? = null
     get() {
@@ -55,9 +56,16 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
   var bookTitle: MutableLiveData<String>
     get() {
       if (_bookTitle == null) {
-        _bookTitle = MediatorLiveData()
+        _bookTitle = DefaultLiveData("Sample Title")
         updateDefaultTitle()
+
+        _bookTitle?.addSource(bookEntries!!) {
+          if (_bookTitle?.hasBeenModified != true) {
+            updateDefaultTitle()
+          }
+        }
       }
+
 
       return _bookTitle!!
     }
@@ -66,7 +74,7 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
   var bookAuthor: MutableLiveData<String>
     get() {
       if (_bookAuthor == null) {
-        _bookAuthor = MediatorLiveData()
+        _bookAuthor = DefaultLiveData("Sample Title")
         updateDefaultAuthor()
       }
 
