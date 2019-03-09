@@ -64,9 +64,10 @@ class BooksViewModelTest {
   fun smokeTest() {
     assertEquals(
       "Test Title file1.epub, Test Title file2.epub",
-      booksViewModel.bookTitle.value)
+      booksViewModel.bookTitle
+    )
     assertEquals(
-      "Test Author 1, Test Author 2", booksViewModel.bookAuthor.value
+      "Test Author 1, Test Author 2", booksViewModel.bookAuthor
     )
   }
 
@@ -80,8 +81,8 @@ class BooksViewModelTest {
       )
     )
 
-    booksViewModel.bookTitle.observeForever {
-      assertEquals("MyTitle file.epub", it)
+    booksViewModel.bookEntries?.observeForever {
+      assertEquals("MyTitle file.epub", booksViewModel.bookTitle)
     }
   }
 }

@@ -56,21 +56,13 @@ class BookMetaFragment : Fragment() {
     bookAuthor = view.findViewById(R.id.bookAuthor)
     bookTitle = view.findViewById(R.id.bookTitle)
 
-    bookAuthor.setText(model.bookAuthor.value)
-    bookTitle.setText(model.bookTitle.value)
-
-    model.bookAuthor.observe(this, Observer {
-      bookAuthor.setText(it)
-    })
-
-    model.bookTitle.observe(this, Observer {
-      bookTitle.setText(it)
-    })
+    bookAuthor.setText(model.bookAuthor)
+    bookTitle.setText(model.bookTitle)
 
     model.bookEntries?.observe(this, Observer {
       Log.d(TAG, "BookAuthor changed")
-      bookAuthor.setText(model.bookAuthor.value)
-      bookTitle.setText(model.bookTitle.value)
+      bookAuthor.setText(model.bookAuthor)
+      bookTitle.setText(model.bookTitle)
     })
 
     val focusChangeListener: (View, Boolean) -> Unit = { v, hasFocus ->

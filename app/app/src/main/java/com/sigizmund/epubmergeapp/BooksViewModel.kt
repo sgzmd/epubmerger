@@ -1,6 +1,5 @@
 package com.sigizmund.epubmergeapp
 
-import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,8 +34,8 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
   }
 
   private var internalBookEntries: DefaultLiveData<List<BookEntry>>? = null
-  private var _bookTitle: DefaultLiveData<String>? = null
-  private var _bookAuthor: DefaultLiveData<String>? = null
+  private var _bookTitle: String? = null
+  private var _bookAuthor: String? = null
 
   var bookEntries: MutableLiveData<List<BookEntry>>? = null
     get() {
@@ -50,50 +49,41 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
       return internalBookEntries
     }
 
-  var bookTitle: MutableLiveData<String>
+  var bookTitle: String
     get() {
       if (_bookTitle == null) {
-        _bookTitle = DefaultLiveData("Sample Title")
-        updateDefaultTitle()
-
-        _bookTitle?.addSource(bookEntries!!) {
-          if (_bookTitle?.hasBeenModified != true) {
-            updateDefaultTitle()
-          }
-        }
+        return defaultTitle()
+      } else {
+        return _bookTitle!!
       }
-
-
-      return _bookTitle!!
     }
-    private set(value) {}
+    set(value) {
+      _bookTitle = value
+    }
 
-  var bookAuthor: MutableLiveData<String>
+  var bookAuthor: String
     get() {
       if (_bookAuthor == null) {
-        _bookAuthor = DefaultLiveData("Sample Title")
-        updateDefaultAuthor()
-      }
-
-      return _bookAuthor!!
-    }
-    private set(value) {}
-
-
-  private fun updateDefaultTitle() {
-    val titles = bookEntries?.value?.map { it.title }
-    _bookTitle?.postValue(
-      if (titles == null || titles.all { it.isBlank() }) {
-        "Sample Title"
+        return defaultAuthor()
       } else {
-        titles.filter { !it.isBlank() }.joinToString(", ")
+        return _bookAuthor!!
       }
-    )
+    }
+    set(value) {
+      _bookAuthor = value
+    }
 
-    Log.d(TAG, "Book title: $_bookTitle")
+
+  private fun defaultTitle(): String {
+    val titles = bookEntries?.value?.map { it.title }
+    return if (titles == null || titles.all { it.isBlank() }) {
+      "Sample Title"
+    } else {
+      titles.filter { !it.isBlank() }.joinToString(", ")
+    }
   }
 
-  private fun updateDefaultAuthor() {
+  private fun defaultAuthor(): String {
     var authors =
       bookEntries?.value?.map { book: BookEntry ->
         book.getBook().metadata.authors
@@ -102,16 +92,11 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
         ?.map { "${it.firstname} ${it.lastname}".trim() }
         ?.toSet()
 
-    _bookAuthor?.postValue(
-      if (authors == null || authors.all { it.isBlank() }) {
+    return if (authors == null || authors.all { it.isBlank() }) {
         "Sample Author"
       } else {
         authors.filter { !it.isBlank() }.joinToString(", ")
       }
-    )
-
-
-    Log.d(TAG, "Book Author: $_bookAuthor")
   }
 }
 

@@ -26,8 +26,8 @@ class BookMergeWizardActivity :
   private val TAG = "BookMergeWizardActivity"
 
   override fun onMetadataUpdated(title: String, author: String) {
-    bookViewModel.bookTitle.postValue(title)
-    bookViewModel.bookAuthor.postValue(author)
+    bookViewModel.bookTitle = title
+    bookViewModel.bookAuthor = author
   }
 
 
