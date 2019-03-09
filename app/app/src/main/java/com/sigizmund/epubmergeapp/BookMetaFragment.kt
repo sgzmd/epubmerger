@@ -2,11 +2,15 @@ package com.sigizmund.epubmergeapp
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import java.util.*
 
 
 private const val ARG_TITLE = "book_meta_title"
@@ -23,19 +27,24 @@ private const val ARG_AUTHOR = "book_meta_author"
  */
 class BookMetaFragment : Fragment() {
   // TODO: Rename and change types of parameters
+  private val TAG = "BookMetaFragment"
   private var title: String? = null
   private var author: String? = null
   private var listener: OnFragmentInteractionListener? = null
   private lateinit var bookAuthor: EditText
   private lateinit var bookTitle: EditText
 
+  private lateinit var model: BooksViewModel
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let {
-      title = it.getString(ARG_TITLE)
-      author = it.getString(ARG_AUTHOR)
+      var entries = it.getStringArrayList(SELECTED_FILES)
+      model = ViewModelProviders.of(
+        requireActivity(),
+        BooksViewModel.BooksViewModelFactory(entries)
+      )[BooksViewModel::class.java]
     }
-
   }
 
   override fun onCreateView(
@@ -47,13 +56,21 @@ class BookMetaFragment : Fragment() {
     bookAuthor = view.findViewById(R.id.bookAuthor)
     bookTitle = view.findViewById(R.id.bookTitle)
 
-    bookAuthor.setText(author)
-    bookTitle.setText(title)
+    bookAuthor.setText(model.bookAuthor)
+    bookTitle.setText(model.bookTitle)
+
+    model.bookEntries?.observe(this, Observer {
+      Log.d(TAG, "BookAuthor changed")
+      bookAuthor.setText(model.bookAuthor)
+      bookTitle.setText(model.bookTitle)
+    })
 
     val focusChangeListener: (View, Boolean) -> Unit = { v, hasFocus ->
       if (!hasFocus) {
         // if listener is null then fragment wasn't set up correctly
         listener!!.onMetadataUpdated(bookTitle.text.toString(), bookAuthor.text.toString())
+        model.bookTitle = bookTitle.text.toString()
+        model.bookAuthor = bookAuthor.text.toString()
       }
     }
     bookTitle.setOnFocusChangeListener(focusChangeListener)
@@ -102,11 +119,10 @@ class BookMetaFragment : Fragment() {
      */
     // TODO: Rename and change types and number of parameters
     @JvmStatic
-    fun newInstance(model: ReadOnlyModel) =
+    fun newInstance(model: ArrayList<String>) =
       BookMetaFragment().apply {
         arguments = Bundle().apply {
-          putString(ARG_TITLE, model.bookTitle)
-          putString(ARG_AUTHOR, model.bookAuthor)
+          putStringArrayList(SELECTED_FILES, model)
         }
       }
   }

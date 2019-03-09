@@ -6,7 +6,8 @@ import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.epub.EpubReader
 import java.nio.file.Paths
 
-data class BookEntry(val book: Book, val fileName: String) : Parcelable {
+@Mockable
+open class BookEntry3(val book: Book, val fileName: String) : Parcelable {
   override fun writeToParcel(dest: Parcel?, flags: Int) {
     dest?.writeString(fileName)
   }
