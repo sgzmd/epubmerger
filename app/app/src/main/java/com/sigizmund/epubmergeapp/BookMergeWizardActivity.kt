@@ -1,14 +1,18 @@
 package com.sigizmund.epubmergeapp
 
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
+import epubmerger.BookMerger
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
+import java.nio.file.Paths
 import java.util.*
 
 private const val NUM_PAGES = 3
@@ -40,7 +44,7 @@ class BookMergeWizardActivity :
 
     buttonNext.setOnClickListener {
       if (viewPager.currentItem == 2) {
-
+        finishWizard()
       } else {
         viewPager.currentItem++
       }
@@ -76,6 +80,26 @@ class BookMergeWizardActivity :
       BooksViewModel.BooksViewModelFactory(selectedFiles)
     )[BooksViewModel::class.java]
 
+  }
+
+  private fun finishWizard() {
+    val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
+    val title = bookViewModel.bookTitle
+
+    merger.mergedBookTitle = title
+    merger.mergedBookAuthor = bookViewModel.bookAuthor
+
+    val fileName = title.replace(' ', '_').replace('/', '_')
+    val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
+    val resultPath = Paths.get(downloads.toString(), "$fileName.epub")
+
+    merger.mergeBooks()
+    merger.writeBook(resultPath)
+
+    Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG)
+
+    // exiting activity.
+    finish()
   }
 
   private fun updateButtonsState(position: Int) {

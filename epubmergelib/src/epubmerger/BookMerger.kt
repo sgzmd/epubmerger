@@ -120,11 +120,19 @@ class BookMerger(var epubs: List<Book>) {
 
   private fun generateMetadata() {
     result.metadata.authors.clear()
+
+    if (mergedBookAuthor.length > 1) {
+      result.metadata.authors.add(Author(mergedBookAuthor))
+    }
     result.metadata.authors.addAll(epubs.map { it.metadata.authors }.flatten<Author?>().distinct())
 
     result.metadata.titles.clear()
     val allTitles = epubs.map { it.metadata.titles }.flatten<String?>()
     val series = allTitles.joinToString("; ")
+
+    if (mergedBookTitle.length > 1) {
+      result.metadata.titles.add(mergedBookTitle)
+    }
     result.metadata.titles.addAll(allTitles)
     result.metadata.titles.add(series)
 
