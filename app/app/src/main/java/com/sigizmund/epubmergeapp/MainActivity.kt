@@ -88,9 +88,9 @@ class MainActivity : AppCompatActivity() {
 
     val picker = FilePickerDialog(this, dialogProperties)
     picker.setDialogSelectionListener { files: Array<out String> ->
-      val intent = Intent(this, ReorderBooksActivity::class.java)
+      val intent = Intent(this, BookMergeWizardActivity::class.java)
       val extras = Bundle()
-      extras.putStringArrayList(ReorderBooksActivity.SELECTED_FILES_KEY, ArrayList(files.asList()))
+      extras.putStringArrayList(SELECTED_FILES, ArrayList(files.asList()))
       intent.putExtras(extras)
       startActivity(intent)
     }

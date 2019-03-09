@@ -97,7 +97,7 @@ class EpubMergeEndToEndTest {
     val epubMerger = BookMerger(files.map { EpubReader().readEpub(it.toFile().inputStream()) })
     epubMerger.mergeBooks()
 
-    epubMerger.mergedBookAuthor = "MyAuthor"
+    epubMerger.mergedBookAuthor = "MyAuthor981"
 
     val tempFile = File.createTempFile("epubmerger-test", ".epub")
     tempFile.deleteOnExit()
@@ -108,7 +108,7 @@ class EpubMergeEndToEndTest {
     val book = EpubReader().readEpub(tempFile.inputStream())
     assertThat(book).isNotNull()
     LOG.info("Book title is ${book.metadata.firstTitle}")
-    assertThat(book.metadata.authors).containsExactlyElementsIn(listOf(Author("MyAuthor")))
+    assertThat(book.metadata.authors).containsExactlyElementsIn(listOf(Author("MyAuthor981")))
   }
 
 
