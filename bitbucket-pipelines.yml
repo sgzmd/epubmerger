@@ -7,4 +7,4 @@ pipelines:
           - maven
         script: # Modify the commands below to build your repository.
           - cd epubmergelib && mvn -B verify
-          - cd ../app && ./gradlew test
+#          - cd ../app && ./gradlew test
