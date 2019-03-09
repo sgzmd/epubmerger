@@ -2,6 +2,7 @@ package com.sigizmund.epubmergeapp
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ private const val ARG_AUTHOR = "book_meta_author"
  */
 class BookMetaFragment : Fragment() {
   // TODO: Rename and change types of parameters
+  private val TAG = "BookMetaFragment"
   private var title: String? = null
   private var author: String? = null
   private var listener: OnFragmentInteractionListener? = null
@@ -65,10 +67,11 @@ class BookMetaFragment : Fragment() {
       bookTitle.setText(it)
     })
 
-//    model.bookEntries?.observe(this, Observer {
-//      bookAuthor.setText(model.bookAuthor.value)
-//      bookTitle.setText(model.bookTitle.value)
-//    })
+    model.bookEntries?.observe(this, Observer {
+      Log.d(TAG, "BookAuthor changed")
+      bookAuthor.setText(model.bookAuthor.value)
+      bookTitle.setText(model.bookTitle.value)
+    })
 
     val focusChangeListener: (View, Boolean) -> Unit = { v, hasFocus ->
       if (!hasFocus) {

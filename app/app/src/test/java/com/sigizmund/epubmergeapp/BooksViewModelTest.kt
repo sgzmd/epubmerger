@@ -71,7 +71,7 @@ class BooksViewModelTest {
   }
 
   @Test
-  fun testObserve_NoBooks() {
+  fun testObserve_Author() {
     booksViewModel.bookEntries?.postValue(
       listOf(
         createMockBookEntry(
