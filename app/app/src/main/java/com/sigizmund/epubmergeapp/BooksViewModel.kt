@@ -1,14 +1,11 @@
 package com.sigizmund.epubmergeapp
 
-import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import nl.siegmann.epublib.epub.EpubReader
-import org.jetbrains.anko.doAsync
 import java.nio.file.Paths
 
 open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
@@ -99,11 +96,11 @@ open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
   private fun updateDefaultAuthor() {
     var authors =
       bookEntries?.value?.map { book: BookEntry ->
-        book.book.metadata.authors
+        book.getBook().metadata.authors
       }
         ?.flatten()
         ?.map { "${it.firstname} ${it.lastname}".trim() }
-        ?.toSortedSet()
+        ?.toSet()
 
     _bookAuthor?.postValue(
       if (authors == null || authors.all { it.isBlank() }) {

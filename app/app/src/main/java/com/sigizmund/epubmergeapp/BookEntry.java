@@ -34,4 +34,8 @@ public class BookEntry {
 
     return result;
   }
+
+  public Book getBook() {
+    return book;
+  }
 }
