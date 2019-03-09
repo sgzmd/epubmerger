@@ -69,6 +69,8 @@ class BookMetaFragment : Fragment() {
       if (!hasFocus) {
         // if listener is null then fragment wasn't set up correctly
         listener!!.onMetadataUpdated(bookTitle.text.toString(), bookAuthor.text.toString())
+        model.bookTitle = bookTitle.text.toString()
+        model.bookAuthor = bookAuthor.text.toString()
       }
     }
     bookTitle.setOnFocusChangeListener(focusChangeListener)

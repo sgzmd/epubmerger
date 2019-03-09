@@ -10,8 +10,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
+import com.github.angads25.filepicker.model.DialogConfigs
+import com.github.angads25.filepicker.model.DialogProperties
+import com.github.angads25.filepicker.view.FilePickerDialog
 import epubmerger.BookMerger
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
+import java.io.File
 import java.nio.file.Paths
 import java.util.*
 
@@ -83,23 +87,37 @@ class BookMergeWizardActivity :
   }
 
   private fun finishWizard() {
-    val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
-    val title = bookViewModel.bookTitle
 
-    merger.mergedBookTitle = title
-    merger.mergedBookAuthor = bookViewModel.bookAuthor
+    val dialogProperties = DialogProperties()
+    dialogProperties.selection_mode = DialogConfigs.SINGLE_MODE
+    dialogProperties.selection_type = DialogConfigs.DIR_SELECT
+    dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
 
-    val fileName = title.replace(' ', '_').replace('/', '_')
-    val downloads = Paths.get(Environment.getExternalStorageDirectory().absolutePath, "Download")
-    val resultPath = Paths.get(downloads.toString(), "$fileName.epub")
+    dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
+    dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
+    dialogProperties.extensions = null
 
-    merger.mergeBooks()
-    merger.writeBook(resultPath)
+    val picker = FilePickerDialog(this, dialogProperties)
+    picker.setDialogSelectionListener { directories: Array<out String> ->
+      val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
+      val title = bookViewModel.bookTitle
 
-    Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG)
+      merger.mergedBookTitle = title
+      merger.mergedBookAuthor = bookViewModel.bookAuthor
 
-    // exiting activity.
-    finish()
+      val fileName = title.replace(' ', '_').replace('/', '_')
+      val resultPath = Paths.get("${directories.get(0)}/$fileName.epub")
+
+      merger.mergeBooks()
+      merger.writeBook(resultPath)
+
+      Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG)
+
+      // exiting activity.
+      finish()
+    }
+
+    picker.show()
   }
 
   private fun updateButtonsState(position: Int) {
