@@ -76,6 +76,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-extensions
     implementation group: 'androidx.lifecycle', name: 'lifecycle-extensions', version: '2.0.0'
+    // https://mvnrepository.com/artifact/androidx.core/core-ktx
+    implementation group: 'androidx.core', name: 'core-ktx', version: '1.0.1'
+
 
 
 

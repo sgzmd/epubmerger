@@ -123,8 +123,9 @@ class BookMerger(var epubs: List<Book>) {
 
     if (mergedBookAuthor.length > 1) {
       result.metadata.authors.add(Author(mergedBookAuthor))
+    } else {
+      result.metadata.authors.addAll(epubs.map { it.metadata.authors }.flatten<Author?>().distinct())
     }
-    result.metadata.authors.addAll(epubs.map { it.metadata.authors }.flatten<Author?>().distinct())
 
     result.metadata.titles.clear()
     val allTitles = epubs.map { it.metadata.titles }.flatten<String?>()
@@ -132,9 +133,10 @@ class BookMerger(var epubs: List<Book>) {
 
     if (mergedBookTitle.length > 1) {
       result.metadata.titles.add(mergedBookTitle)
+    } else {
+      result.metadata.titles.addAll(allTitles)
+      result.metadata.titles.add(series)
     }
-    result.metadata.titles.addAll(allTitles)
-    result.metadata.titles.add(series)
 
     result.metadata.addIdentifier(Identifier("uuid", UUID.randomUUID().toString()))
     val publishers = epubs.map { it.metadata.publishers }.flatten().toSet()

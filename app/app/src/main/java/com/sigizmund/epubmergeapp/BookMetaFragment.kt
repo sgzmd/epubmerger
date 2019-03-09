@@ -2,6 +2,8 @@ package com.sigizmund.epubmergeapp
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -65,15 +67,29 @@ class BookMetaFragment : Fragment() {
       bookTitle.setText(model.bookTitle)
     })
 
-    val focusChangeListener: (View, Boolean) -> Unit = { v, hasFocus ->
-      if (!hasFocus) {
-        // if listener is null then fragment wasn't set up correctly
-        listener!!.onMetadataUpdated(bookTitle.text.toString(), bookAuthor.text.toString())
-        model.bookTitle = bookTitle.text.toString()
-        model.bookAuthor = bookAuthor.text.toString()
+
+
+    bookAuthor.addTextChangedListener(object : TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      override fun afterTextChanged(s: Editable?) {
+        Log.d(TAG, "Book author has changed to ${s.toString()}, updating")
+
+        // This has side effect: now title is considered to be "set", so it won't
+        // be automatically updated when books are re-ordered
+        model.bookAuthor = s.toString()
       }
-    }
-    bookTitle.setOnFocusChangeListener(focusChangeListener)
+    })
+
+    bookTitle.addTextChangedListener(object : TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      override fun afterTextChanged(s: Editable?) {
+        Log.d(TAG, "Book title was changed to ${bookTitle.text}, updating")
+
+        model.bookTitle = s.toString()
+      }
+    })
 
     return view
   }
@@ -90,6 +106,7 @@ class BookMetaFragment : Fragment() {
 
   override fun onDetach() {
     super.onDetach()
+
     listener = null
   }
 
