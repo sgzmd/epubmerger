@@ -28,10 +28,7 @@ private const val ARG_AUTHOR = "book_meta_author"
  *
  */
 class BookMetaFragment : Fragment() {
-  // TODO: Rename and change types of parameters
   private val TAG = "BookMetaFragment"
-  private var title: String? = null
-  private var author: String? = null
   private var listener: OnFragmentInteractionListener? = null
   private lateinit var bookAuthor: EditText
   private lateinit var bookTitle: EditText
@@ -41,7 +38,7 @@ class BookMetaFragment : Fragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let {
-      var entries = it.getStringArrayList(SELECTED_FILES)
+      val entries = it.getStringArrayList(SELECTED_FILES)
       model = ViewModelProviders.of(
         requireActivity(),
         BooksViewModel.BooksViewModelFactory(entries)
@@ -126,15 +123,6 @@ class BookMetaFragment : Fragment() {
   }
 
   companion object {
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param title Parameter 1.
-     * @param author Parameter 2.
-     * @return A new instance of fragment BookMetaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     @JvmStatic
     fun newInstance(model: ArrayList<String>) =
       BookMetaFragment().apply {
