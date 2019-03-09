@@ -39,7 +39,11 @@ class BookMergeWizardActivity :
     setContentView(R.layout.activity_book_merge_wizard)
 
     buttonNext.setOnClickListener {
-      viewPager.currentItem++
+      if (viewPager.currentItem == 2) {
+
+      } else {
+        viewPager.currentItem++
+      }
     }
 
     buttonPrevious.setOnClickListener {
@@ -79,16 +83,22 @@ class BookMergeWizardActivity :
       0 -> {
         buttonNext.isEnabled = true
         buttonPrevious.isEnabled = false
+
+        buttonNext.text = getString(R.string.wizard_next)
       }
 
       1 -> {
         buttonNext.isEnabled = true
         buttonPrevious.isEnabled = true
+
+        buttonNext.text = getString(R.string.wizard_next)
       }
 
       2 -> {
-        buttonNext.isEnabled = false
+        buttonNext.isEnabled = true
         buttonPrevious.isEnabled = true
+
+        buttonNext.text = getString(R.string.wizard_finish)
       }
     }
   }
