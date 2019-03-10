@@ -1,7 +1,6 @@
 package com.sigizmund.epubmergeapp
 
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,9 +16,10 @@ import epubmerger.BookMerger
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
 import java.io.File
 import java.nio.file.Paths
+import java.text.Normalizer
 import java.util.*
 
-private const val NUM_PAGES = 3
+private const val NUM_PAGES = 2
 
 class BookMergeWizardActivity :
   AppCompatActivity(),
@@ -47,7 +47,7 @@ class BookMergeWizardActivity :
     setContentView(R.layout.activity_book_merge_wizard)
 
     buttonNext.setOnClickListener {
-      if (viewPager.currentItem == 2) {
+      if (viewPager.currentItem == NUM_PAGES - 1) {
         finishWizard()
       } else {
         viewPager.currentItem++
@@ -105,13 +105,13 @@ class BookMergeWizardActivity :
       merger.mergedBookTitle = title
       merger.mergedBookAuthor = bookViewModel.bookAuthor
 
-      val fileName = title.replace(' ', '_').replace('/', '_')
+      val fileName = StringUtil.slugify(title, replacement = "_")
       val resultPath = Paths.get("${directories.get(0)}/$fileName.epub")
 
       merger.mergeBooks()
       merger.writeBook(resultPath)
 
-      Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG)
+      Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG).show()
 
       // exiting activity.
       finish()
@@ -129,14 +129,14 @@ class BookMergeWizardActivity :
         buttonNext.text = getString(R.string.wizard_next)
       }
 
+//      1 -> {
+//        buttonNext.isEnabled = true
+//        buttonPrevious.isEnabled = true
+//
+//        buttonNext.text = getString(R.string.wizard_next)
+//      }
+
       1 -> {
-        buttonNext.isEnabled = true
-        buttonPrevious.isEnabled = true
-
-        buttonNext.text = getString(R.string.wizard_next)
-      }
-
-      2 -> {
         buttonNext.isEnabled = true
         buttonPrevious.isEnabled = true
 
@@ -159,9 +159,9 @@ class BookMergeWizardActivity :
           BookMetaFragment.newInstance(selectedFiles)
         }
 
-        2 -> {
-          ReorderBooksFragment.newInstance(selectedFiles)
-        }
+//        2 -> {
+//          ReorderBooksFragment.newInstance(selectedFiles)
+//        }
         else -> {
           throw RuntimeException("Unsupported index")
         }
@@ -169,5 +169,13 @@ class BookMergeWizardActivity :
 
       return item
     }
+  }
+
+  object StringUtil {
+    fun slugify(word: String, replacement: String = "-") = Normalizer
+      .normalize(word, Normalizer.Form.NFD)
+      .replace("\\s+".toRegex(), replacement)
+      .replace("\\/".toRegex(), replacement)
+      .replace("\\\\".toRegex(), replacement)
   }
 }

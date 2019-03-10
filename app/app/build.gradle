@@ -45,6 +45,25 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    /**
+     * Standard / androidx libraries
+     */
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation group: 'org.jetbrains.anko', name: 'anko-commons', version: '0.10.5'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-extensions', version: '2.0.0'
+    implementation group: 'androidx.core', name: 'core-ktx', version: '1.0.1'
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: '2.0.0'
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-viewmodel', version: '2.0.0'
+
+    annotationProcessor group: 'android.arch.lifecycle', name: 'extensions', version: '1.1.1'
+
+    /**
+     * Epub handling
+     */
     implementation('nl.siegmann.epublib:epublib-core:3.1') {
         exclude group: 'org.slf4j'
         exclude group: 'xmlpull'
@@ -53,34 +72,9 @@ dependencies {
     implementation 'org.slf4j:slf4j-android:1.7.25'
     implementation 'com.github.angads25:filepicker:1.1.1'
     implementation('com.github.fondesa:kpermissions:1.0.0')
-    // https://mvnrepository.com/artifact/org.jsoup/jsoup
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
 
     implementation 'com.ernestoyaquello.dragdropswiperecyclerview:drag-drop-swipe-recyclerview:0.0.2'
-
-    // https://mvnrepository.com/artifact/org.jetbrains.anko/anko-commons
-    implementation group: 'org.jetbrains.anko', name: 'anko-commons', version: '0.10.5'
-
-
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
-    // https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-viewmodel-ktx
-    implementation group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: '2.0.0'
-    // https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-viewmodel
-    implementation group: 'androidx.lifecycle', name: 'lifecycle-viewmodel', version: '2.0.0'
-    // https://mvnrepository.com/artifact/android.arch.lifecycle/extensions
-    annotationProcessor group: 'android.arch.lifecycle', name: 'extensions', version: '1.1.1'
-
-    // https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-extensions
-    implementation group: 'androidx.lifecycle', name: 'lifecycle-extensions', version: '2.0.0'
-    // https://mvnrepository.com/artifact/androidx.core/core-ktx
-    implementation group: 'androidx.core', name: 'core-ktx', version: '1.0.1'
-
-
-
 
     testImplementation 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
