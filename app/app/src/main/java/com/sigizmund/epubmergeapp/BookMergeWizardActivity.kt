@@ -1,5 +1,6 @@
 package com.sigizmund.epubmergeapp
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,13 +11,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
-import com.github.angads25.filepicker.model.DialogConfigs
-import com.github.angads25.filepicker.model.DialogProperties
-import com.github.angads25.filepicker.view.FilePickerDialog
 import epubmerger.BookMerger
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
-import java.io.File
-import java.nio.file.Paths
 import java.text.Normalizer
 import java.util.*
 
@@ -25,7 +21,8 @@ private const val NUM_PAGES = 2
 class BookMergeWizardActivity :
   AppCompatActivity(),
   ReorderBooksFragment.BooksReoderListener,
-  BookMetaFragment.OnFragmentInteractionListener  {
+  BookMetaFragment.OnFragmentInteractionListener {
+  val SAVE_FILE_ACTION = 43
 
   override fun onBooksOrderChanged(entries: List<BookEntry>) {
     // model?.updateBooksOrder(entries)
@@ -89,36 +86,69 @@ class BookMergeWizardActivity :
 
   private fun finishWizard() {
 
-    val dialogProperties = DialogProperties()
-    dialogProperties.selection_mode = DialogConfigs.SINGLE_MODE
-    dialogProperties.selection_type = DialogConfigs.DIR_SELECT
-    dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
+    val title = bookViewModel.bookTitle
 
-    dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
-    dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
-    dialogProperties.extensions = null
-
-    val picker = FilePickerDialog(this, dialogProperties)
-    picker.setDialogSelectionListener { directories: Array<out String> ->
-      val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
-      val title = bookViewModel.bookTitle
-
-      merger.mergedBookTitle = title
-      merger.mergedBookAuthor = bookViewModel.bookAuthor
-
-      val fileName = StringUtil.slugify(title, replacement = "_")
-      val resultPath = Paths.get("${directories.get(0)}/$fileName.epub")
-
-      merger.mergeBooks()
-      merger.writeBook(resultPath)
-
-      Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG).show()
-
-      // exiting activity.
-      finish()
+    val fileName = StringUtil.slugify(title, replacement = "_") + ".epub"
+    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+      addCategory(Intent.CATEGORY_OPENABLE)
+      type = "application/epub+zip"
+      putExtra(Intent.EXTRA_TITLE, fileName)
     }
 
-    picker.show()
+    startActivityForResult(intent, SAVE_FILE_ACTION)
+
+//
+//    val dialogProperties = DialogProperties()
+//    dialogProperties.selection_mode = DialogConfigs.SINGLE_MODE
+//    dialogProperties.selection_type = DialogConfigs.DIR_SELECT
+//    dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
+//
+//    dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
+//    dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
+//    dialogProperties.extensions = null
+//
+//    val picker = FilePickerDialog(this, dialogProperties)
+//    picker.setDialogSelectionListener { directories: Array<out String> ->
+//      val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
+//      val title = bookViewModel.bookTitle
+//
+//      merger.mergedBookTitle = title
+//      merger.mergedBookAuthor = bookViewModel.bookAuthor
+//
+//      val fileName = StringUtil.slugify(title, replacement = "_")
+//      val resultPath = Paths.get("${directories.get(0)}/$fileName.epub")
+//
+//      merger.mergeBooks()
+//      merger.writeBook(resultPath)
+//
+//      Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG).show()
+//
+//      // exiting activity.
+//      finish()
+//    }
+//
+//    picker.show()
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (requestCode == SAVE_FILE_ACTION) {
+      if (data != null) {
+        val uri = data.data!!
+
+        val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
+        val title = bookViewModel.bookTitle
+
+        merger.mergedBookTitle = title
+        merger.mergedBookAuthor = bookViewModel.bookAuthor
+
+        merger.mergeBooks()
+        val os = contentResolver.openOutputStream(uri)
+        merger.writeBook(os)
+
+        Toast.makeText(this, "Book saved to ${uri.path}", Toast.LENGTH_LONG).show()
+        finish()
+      }
+    }
   }
 
   private fun updateButtonsState(position: Int) {

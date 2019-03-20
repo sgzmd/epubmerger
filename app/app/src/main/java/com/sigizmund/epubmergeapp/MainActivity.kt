@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
       addCategory(Intent.CATEGORY_OPENABLE)
       type = "application/epub+zip"
       putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+      putExtra("android.content.extra.SHOW_ADVANCED", true)
     }
 
     startActivityForResult(intent, FILE_SELECT_CODE)

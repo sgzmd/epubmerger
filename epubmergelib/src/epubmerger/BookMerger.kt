@@ -4,6 +4,7 @@ import nl.siegmann.epublib.domain.*
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
 import org.slf4j.LoggerFactory
+import java.io.OutputStream
 import java.nio.file.Path
 import java.util.*
 
@@ -153,8 +154,13 @@ class BookMerger(var epubs: List<Book>) {
     result.metadata.addPublisher(PUBLISHER)
   }
 
+  fun writeBook(os: OutputStream) {
+    EpubWriter().write(result, os)
+    os.close()
+  }
+
   fun writeBook(path: Path) {
-    EpubWriter().write(result, path.toFile().outputStream())
+    writeBook(path.toFile().outputStream())
   }
 
   private var _mergedBookTitle: String? = null
@@ -189,7 +195,7 @@ class BookMerger(var epubs: List<Book>) {
   var metadata: BookMetadata? = null
     set(value) {
       mergedBookAuthor = value?.author!!
-      mergedBookTitle = value?.title!!
+      mergedBookTitle = value.title
     }
 
   companion object {
