@@ -1,23 +1,25 @@
 package com.sigizmund.epubmergeapp
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.app.Application
+import android.net.Uri
+import androidx.lifecycle.*
 import nl.siegmann.epublib.epub.EpubReader
-import java.nio.file.Paths
+import java.util.*
 
-open class BooksViewModel(var sourceFiles: List<String>) : ViewModel() {
+open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : AndroidViewModel(app) {
   private val TAG = "BooksViewModel"
 
-  class BooksViewModelFactory(var sourceFiles: List<String>) : ViewModelProvider.Factory {
+  class BooksViewModelFactory(var sourceFiles: ArrayList<Uri>, val app: Application) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-      return BooksViewModel(sourceFiles) as T
+      return BooksViewModel(app, sourceFiles) as T
     }
   }
 
-  open fun createBookEntry(it: String) =
-    BookEntry(EpubReader().readEpub(Paths.get(it).toFile().inputStream()), it)
+  open fun createBookEntry(it: Uri): BookEntry {
+    val istream = getApplication<Application>().contentResolver.openInputStream(it)
+    return BookEntry(EpubReader().readEpub(istream), it)
+  }
 
   class DefaultLiveData<T>(val defaultValue: T) : MediatorLiveData<T>() {
     var hasBeenModified = false

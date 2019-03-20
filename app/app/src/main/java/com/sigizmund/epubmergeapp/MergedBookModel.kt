@@ -1,9 +1,10 @@
 package com.sigizmund.epubmergeapp
 
+import android.net.Uri
 import android.util.Log
+import androidx.core.net.toFile
 import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.epub.EpubReader
-import java.nio.file.Paths
 
 interface ReadOnlyModel {
   var books: List<Book>
@@ -13,10 +14,10 @@ interface ReadOnlyModel {
   var bookEntries: List<BookEntry>
 }
 
-class MergedBookModel(var sourceFiles: List<String>) : ReadOnlyModel {
+class MergedBookModel(var sourceFiles: List<Uri>) : ReadOnlyModel {
   private val TAG = "MergedBookModel"
 
-  private var _books: List<Book> = sourceFiles.map { EpubReader().readEpub(Paths.get(it).toFile().inputStream()) }
+  private var _books: List<Book> = sourceFiles.map { EpubReader().readEpub(it.toFile().inputStream()) }
   private lateinit var _bookTitle: String
   private var _defaultTitleUsed = true
 

@@ -1,6 +1,7 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -38,10 +39,10 @@ class BookMetaFragment : Fragment() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     arguments?.let {
-      val entries = it.getStringArrayList(SELECTED_FILES)
+      val entries = it.getParcelableArrayList<Uri>(SELECTED_FILES)
       model = ViewModelProviders.of(
         requireActivity(),
-        BooksViewModel.BooksViewModelFactory(entries)
+        BooksViewModel.BooksViewModelFactory(entries, activity?.application!!)
       )[BooksViewModel::class.java]
     }
   }
@@ -122,10 +123,10 @@ class BookMetaFragment : Fragment() {
 
   companion object {
     @JvmStatic
-    fun newInstance(model: ArrayList<String>) =
+    fun newInstance(model: ArrayList<Uri>) =
       BookMetaFragment().apply {
         arguments = Bundle().apply {
-          putStringArrayList(SELECTED_FILES, model)
+          putParcelableArrayList(SELECTED_FILES, model)
         }
       }
   }

@@ -3,21 +3,19 @@ package com.sigizmund.epubmergeapp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.fondesa.kpermissions.extension.listeners
 import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.github.angads25.filepicker.model.DialogConfigs
-import com.github.angads25.filepicker.model.DialogProperties
-import com.github.angads25.filepicker.view.FilePickerDialog
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
+  val TAG = "MainActivity"
   val FILE_SELECT_CODE = 11
   val PERMISSION_REQUEST_CODE = 12
 
@@ -78,22 +76,49 @@ class MainActivity : AppCompatActivity() {
       return
     }
 
-    val dialogProperties = DialogProperties()
-    dialogProperties.selection_mode = DialogConfigs.MULTI_MODE
-    dialogProperties.selection_type = DialogConfigs.FILE_SELECT
-    dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
-    dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
-    dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
-    dialogProperties.extensions = null
-
-    val picker = FilePickerDialog(this, dialogProperties)
-    picker.setDialogSelectionListener { files: Array<out String> ->
-      val intent = Intent(this, BookMergeWizardActivity::class.java)
-      val extras = Bundle()
-      extras.putStringArrayList(SELECTED_FILES, ArrayList(files.asList()))
-      intent.putExtras(extras)
-      startActivity(intent)
+    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+      addCategory(Intent.CATEGORY_OPENABLE)
+      type = "application/epub+zip"
+      putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
     }
-    picker.show()
+
+    startActivityForResult(intent, FILE_SELECT_CODE)
+
+//
+//    val dialogProperties = DialogProperties()
+//    dialogProperties.selection_mode = DialogConfigs.MULTI_MODE
+//    dialogProperties.selection_type = DialogConfigs.FILE_SELECT
+//    dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
+//    dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
+//    dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
+//    dialogProperties.extensions = null
+//
+//    val picker = FilePickerDialog(this, dialogProperties)
+//    picker.setDialogSelectionListener { files: Array<out String> ->
+//      val intent = Intent(this, BookMergeWizardActivity::class.java)
+//      val extras = Bundle()
+//      extras.putStringArrayList(SELECTED_FILES, ArrayList(files.asList()))
+//      intent.putExtras(extras)
+//      startActivity(intent)
+//    }
+//    picker.show()
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (requestCode == FILE_SELECT_CODE) {
+      if (data != null) {
+        val clipData = data.clipData
+        val fileList = ArrayList<Uri>()
+        for (i in 0 until clipData.itemCount) {
+          fileList.add(clipData.getItemAt(i).uri)
+        }
+
+        val intent = Intent(this, BookMergeWizardActivity::class.java)
+        val extras = Bundle()
+        extras.putParcelableArrayList(SELECTED_FILES, fileList)
+        intent.putExtras(extras)
+        startActivity(intent)
+      }
+    }
   }
 }

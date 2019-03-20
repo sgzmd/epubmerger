@@ -1,6 +1,7 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -46,10 +47,10 @@ class ReorderBooksFragment : Fragment() {
     super.onCreate(savedInstanceState)
     arguments?.let { extras ->
       // SELECTED_FILES must be passed into this fragment
-      val entries = extras.getStringArrayList(SELECTED_FILES)
+      val entries = extras.getParcelableArrayList<Uri>(SELECTED_FILES)
       model = ViewModelProviders.of(
         requireActivity(),
-        BooksViewModel.BooksViewModelFactory(entries)
+        BooksViewModel.BooksViewModelFactory(entries, activity?.application!!)
       )[BooksViewModel::class.java]
 
       adapter = BooksAdapter(ArrayList<BookEntry>())
@@ -96,10 +97,10 @@ class ReorderBooksFragment : Fragment() {
 
   companion object {
     @JvmStatic
-    fun newInstance(selectedFiles: ArrayList<String>) =
+    fun newInstance(selectedFiles: ArrayList<Uri>) =
       ReorderBooksFragment().apply {
         arguments = Bundle().apply {
-          putStringArrayList(SELECTED_FILES, selectedFiles)
+          putParcelableArrayList(SELECTED_FILES, selectedFiles)
         }
       }
   }

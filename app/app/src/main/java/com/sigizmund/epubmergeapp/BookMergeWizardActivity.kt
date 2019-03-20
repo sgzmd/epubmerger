@@ -1,5 +1,6 @@
 package com.sigizmund.epubmergeapp
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -39,7 +40,7 @@ class BookMergeWizardActivity :
   }
 
 
-  lateinit var selectedFiles: ArrayList<String>
+  lateinit var selectedFiles: ArrayList<Uri>
   private lateinit var bookViewModel: BooksViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,14 +75,14 @@ class BookMergeWizardActivity :
     })
 
     viewPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager)
-    selectedFiles = intent.extras.getStringArrayList(SELECTED_FILES)
+    selectedFiles = intent.extras.getParcelableArrayList<Uri>(SELECTED_FILES)
 
     // For initial page it should be always disabled since this is the first page
     buttonPrevious.isEnabled = false
 
     this.bookViewModel = ViewModelProviders.of(
       this,
-      BooksViewModel.BooksViewModelFactory(selectedFiles)
+      BooksViewModel.BooksViewModelFactory(selectedFiles, application)
     )[BooksViewModel::class.java]
 
   }
