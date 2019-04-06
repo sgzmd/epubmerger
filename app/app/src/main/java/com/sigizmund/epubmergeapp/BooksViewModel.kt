@@ -16,6 +16,11 @@ open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : A
     }
   }
 
+  fun addSourceFiles(files: ArrayList<Uri>) {
+    sourceFiles.addAll(files)
+    internalBookEntries?.setValue(sourceFiles.map { createBookEntry(it) })
+  }
+
   open fun createBookEntry(it: Uri): BookEntry {
     val istream = getApplication<Application>().contentResolver.openInputStream(it)
     return BookEntry(EpubReader().readEpub(istream), it)

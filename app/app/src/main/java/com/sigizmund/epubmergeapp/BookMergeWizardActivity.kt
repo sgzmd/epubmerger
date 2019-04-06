@@ -14,8 +14,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import epubmerger.BookMerger
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
+import kotlinx.android.synthetic.main.fragment_reorder_books.*
 import java.text.Normalizer
 import java.util.*
+
 private const val NUM_PAGES = 2
 
 class BookMergeWizardActivity :
@@ -23,8 +25,13 @@ class BookMergeWizardActivity :
   ReorderBooksFragment.BooksReoderListener,
   BookMetaFragment.OnFragmentInteractionListener {
 
+  companion object {
+    val FILE_SELECT_CODE = 44
+  }
+
   private val TAG = "BookMergeWizardActivity"
   private val SAVE_FILE_ACTION = 43
+
 
   private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
@@ -50,19 +57,8 @@ class BookMergeWizardActivity :
 
   }
 
-  override fun onBooksOrderChanged(entries: List<BookEntry>) {
-    // model?.updateBooksOrder(entries)
-    bookViewModel.bookEntries?.postValue(entries)
-  }
-
-
-  override fun onMetadataUpdated(title: String, author: String) {
-    bookViewModel.bookTitle = title
-    bookViewModel.bookAuthor = author
-  }
   lateinit var selectedFiles: ArrayList<Uri>
-
-  private lateinit var bookViewModel: BooksViewModel
+  lateinit var bookViewModel: BooksViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -105,26 +101,48 @@ class BookMergeWizardActivity :
       this,
       BooksViewModel.BooksViewModelFactory(selectedFiles, application)
     )[BooksViewModel::class.java]
+  }
 
+  override fun onBooksOrderChanged(entries: List<BookEntry>) {
+    // model?.updateBooksOrder(entries)
+    bookViewModel.bookEntries?.postValue(entries)
+  }
+
+  override fun onMetadataUpdated(title: String, author: String) {
+    bookViewModel.bookTitle = title
+    bookViewModel.bookAuthor = author
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    if (requestCode == SAVE_FILE_ACTION) {
-      if (data != null) {
-        val uri = data.data!!
+    when (requestCode) {
+      SAVE_FILE_ACTION -> {
+        if (data != null) {
+          val uri = data.data!!
 
-        val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
-        val title = bookViewModel.bookTitle
+          val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
+          val title = bookViewModel.bookTitle
 
-        merger.mergedBookTitle = title
-        merger.mergedBookAuthor = bookViewModel.bookAuthor
+          merger.mergedBookTitle = title
+          merger.mergedBookAuthor = bookViewModel.bookAuthor
 
-        merger.mergeBooks()
-        val os = contentResolver.openOutputStream(uri)
-        merger.writeBook(os)
+          merger.mergeBooks()
+          val os = contentResolver.openOutputStream(uri)
+          merger.writeBook(os)
 
-        Toast.makeText(this, "Book saved to ${uri.path}", Toast.LENGTH_LONG).show()
-        finish()
+          Toast.makeText(this, "Book saved to ${uri.path}", Toast.LENGTH_LONG).show()
+          finish()
+        }
+      }
+      FILE_SELECT_CODE -> {
+        if (data != null) {
+          val clipData = data.clipData
+          val fileList = ArrayList<Uri>()
+          for (i in 0 until clipData.itemCount) {
+            fileList.add(clipData.getItemAt(i).uri)
+          }
+
+          bookViewModel.addSourceFiles(fileList)
+        }
       }
     }
   }

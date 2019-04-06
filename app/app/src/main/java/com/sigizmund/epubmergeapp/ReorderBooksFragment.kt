@@ -1,6 +1,7 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.sigizmund.epubmergeapp.BookMergeWizardActivity.Companion.FILE_SELECT_CODE
+import kotlinx.android.synthetic.main.fragment_reorder_books.*
 import java.util.*
 
 
@@ -20,9 +24,9 @@ const val SELECTED_FILES = "selected_files_key"
 class ReorderBooksFragment : Fragment() {
   private val TAG = ReorderBooksFragment::class.java.name
   private var listener: BooksReoderListener? = null
+
   private lateinit var adapter: BooksAdapter
   private lateinit var bookList: DragDropSwipeRecyclerView
-
   private lateinit var model: BooksViewModel
 
 
@@ -57,6 +61,10 @@ class ReorderBooksFragment : Fragment() {
       model.bookEntries?.observe(this, androidx.lifecycle.Observer { entries ->
         adapter.dataSet = entries
       })
+
+      model.bookEntries?.observe(this, androidx.lifecycle.Observer {
+        adapter.dataSet = it
+      })
     }
   }
 
@@ -72,6 +80,19 @@ class ReorderBooksFragment : Fragment() {
     bookList.layoutManager = LinearLayoutManager(context)
     bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
     bookList.dragListener = onItemDragListener
+
+    val addBook = view.findViewById<FloatingActionButton>(R.id.add_book)
+    addBook.setOnClickListener {
+      val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = "application/epub+zip"
+        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        putExtra("android.content.extra.SHOW_ADVANCED", true)
+      }
+
+      startActivityForResult(intent, BookMergeWizardActivity.FILE_SELECT_CODE)
+    }
+
 
     return view
   }
