@@ -1,6 +1,7 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Intent
+
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,29 +16,52 @@ import epubmerger.BookMerger
 import kotlinx.android.synthetic.main.activity_book_merge_wizard.*
 import java.text.Normalizer
 import java.util.*
-
 private const val NUM_PAGES = 2
 
 class BookMergeWizardActivity :
   AppCompatActivity(),
   ReorderBooksFragment.BooksReoderListener,
   BookMetaFragment.OnFragmentInteractionListener {
-  val SAVE_FILE_ACTION = 43
+
+  private val TAG = "BookMergeWizardActivity"
+  private val SAVE_FILE_ACTION = 43
+
+  private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+    override fun getCount(): Int = NUM_PAGES
+    override fun getItem(position: Int): Fragment {
+      Log.d(TAG, "getItem($position)")
+      val item: Fragment = when (position) {
+        0 -> {
+          ReorderBooksFragment.newInstance(selectedFiles)
+        }
+
+        1 -> {
+          BookMetaFragment.newInstance(selectedFiles)
+        }
+
+        else -> {
+          throw RuntimeException("Unsupported index")
+        }
+      }
+
+      return item
+    }
+
+  }
 
   override fun onBooksOrderChanged(entries: List<BookEntry>) {
     // model?.updateBooksOrder(entries)
     bookViewModel.bookEntries?.postValue(entries)
   }
 
-  private val TAG = "BookMergeWizardActivity"
 
   override fun onMetadataUpdated(title: String, author: String) {
     bookViewModel.bookTitle = title
     bookViewModel.bookAuthor = author
   }
-
-
   lateinit var selectedFiles: ArrayList<Uri>
+
   private lateinit var bookViewModel: BooksViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +96,7 @@ class BookMergeWizardActivity :
     })
 
     viewPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager)
-    selectedFiles = intent.extras.getParcelableArrayList<Uri>(SELECTED_FILES)
+    selectedFiles = intent?.extras?.getParcelableArrayList<Uri>(SELECTED_FILES) ?: arrayListOf<Uri>()
 
     // For initial page it should be always disabled since this is the first page
     buttonPrevious.isEnabled = false
@@ -82,52 +106,6 @@ class BookMergeWizardActivity :
       BooksViewModel.BooksViewModelFactory(selectedFiles, application)
     )[BooksViewModel::class.java]
 
-  }
-
-  private fun finishWizard() {
-
-    val title = bookViewModel.bookTitle
-
-    val fileName = StringUtil.slugify(title, replacement = "_") + ".epub"
-    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-      addCategory(Intent.CATEGORY_OPENABLE)
-      type = "application/epub+zip"
-      putExtra(Intent.EXTRA_TITLE, fileName)
-    }
-
-    startActivityForResult(intent, SAVE_FILE_ACTION)
-
-//
-//    val dialogProperties = DialogProperties()
-//    dialogProperties.selection_mode = DialogConfigs.SINGLE_MODE
-//    dialogProperties.selection_type = DialogConfigs.DIR_SELECT
-//    dialogProperties.root = File(DialogConfigs.DEFAULT_DIR)
-//
-//    dialogProperties.error_dir = File(DialogConfigs.DEFAULT_DIR)
-//    dialogProperties.offset = File(DialogConfigs.DEFAULT_DIR)
-//    dialogProperties.extensions = null
-//
-//    val picker = FilePickerDialog(this, dialogProperties)
-//    picker.setDialogSelectionListener { directories: Array<out String> ->
-//      val merger = BookMerger(this.bookViewModel.bookEntries?.value?.map { it.book }!!)
-//      val title = bookViewModel.bookTitle
-//
-//      merger.mergedBookTitle = title
-//      merger.mergedBookAuthor = bookViewModel.bookAuthor
-//
-//      val fileName = StringUtil.slugify(title, replacement = "_")
-//      val resultPath = Paths.get("${directories.get(0)}/$fileName.epub")
-//
-//      merger.mergeBooks()
-//      merger.writeBook(resultPath)
-//
-//      Toast.makeText(this, "Book saved to $resultPath", Toast.LENGTH_LONG).show()
-//
-//      // exiting activity.
-//      finish()
-//    }
-//
-//    picker.show()
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -151,6 +129,20 @@ class BookMergeWizardActivity :
     }
   }
 
+  private fun finishWizard() {
+
+    val title = bookViewModel.bookTitle
+
+    val fileName = StringUtil.slugify(title, replacement = "_") + ".epub"
+    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+      addCategory(Intent.CATEGORY_OPENABLE)
+      type = "application/epub+zip"
+      putExtra(Intent.EXTRA_TITLE, fileName)
+    }
+
+    startActivityForResult(intent, SAVE_FILE_ACTION)
+  }
+
   private fun updateButtonsState(position: Int) {
     when (position) {
       0 -> {
@@ -160,45 +152,12 @@ class BookMergeWizardActivity :
         buttonNext.text = getString(R.string.wizard_next)
       }
 
-//      1 -> {
-//        buttonNext.isEnabled = true
-//        buttonPrevious.isEnabled = true
-//
-//        buttonNext.text = getString(R.string.wizard_next)
-//      }
-
       1 -> {
         buttonNext.isEnabled = true
         buttonPrevious.isEnabled = true
 
         buttonNext.text = getString(R.string.wizard_finish)
       }
-    }
-  }
-
-  private inner class ScreenSlidePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
-    override fun getCount(): Int = NUM_PAGES
-
-    override fun getItem(position: Int): Fragment {
-      Log.d(TAG, "getItem($position)")
-      val item: Fragment = when (position) {
-        0 -> {
-          ReorderBooksFragment.newInstance(selectedFiles)
-        }
-
-        1 -> {
-          BookMetaFragment.newInstance(selectedFiles)
-        }
-
-//        2 -> {
-//          ReorderBooksFragment.newInstance(selectedFiles)
-//        }
-        else -> {
-          throw RuntimeException("Unsupported index")
-        }
-      }
-
-      return item
     }
   }
 

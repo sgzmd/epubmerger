@@ -23,6 +23,9 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    startActivity(Intent(this, BookMergeWizardActivity::class.java))
+    finish()
+
     merge_files_button.setOnClickListener {
       startMerge()
     }
