@@ -1,6 +1,7 @@
 package com.sigizmund.epubmergeapp
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,15 +9,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener
+import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemSwipeListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.sigizmund.epubmergeapp.BookMergeWizardActivity.Companion.FILE_SELECT_CODE
 import kotlinx.android.synthetic.main.fragment_reorder_books.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 const val SELECTED_FILES = "selected_files_key"
@@ -100,6 +104,20 @@ class ReorderBooksFragment : Fragment() {
     bookList.layoutManager = LinearLayoutManager(context)
     bookList.orientation = DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING
     bookList.dragListener = onItemDragListener
+    bookList.swipeListener = object: OnItemSwipeListener<BookEntry> {
+      override fun onItemSwiped(position: Int, direction: OnItemSwipeListener.SwipeDirection, item: BookEntry) {
+        AlertDialog.Builder(this@ReorderBooksFragment.context!!)
+          .setTitle("Remove book from the list?")
+          .setMessage("Do you really want to remove ${item.title} from the list? This cannot be undone")
+          .setIcon(android.R.drawable.ic_dialog_alert)
+          .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
+            val list = ArrayList<BookEntry>(model.bookEntries?.value!!)
+            list.removeAt(position)
+            model?.bookEntries?.value = list
+          })
+          .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->  })
+      }
+    }
 
     val addBook = view.findViewById<FloatingActionButton>(R.id.add_book)
     addBook.setOnClickListener {
