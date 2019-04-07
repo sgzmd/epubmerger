@@ -133,18 +133,9 @@ class BookMergeWizardActivity :
           finish()
         }
       }
-      FILE_SELECT_CODE -> {
-        if (data != null) {
-          val clipData = data.clipData
-          val fileList = ArrayList<Uri>()
-          for (i in 0 until clipData.itemCount) {
-            fileList.add(clipData.getItemAt(i).uri)
-          }
-
-          bookViewModel.addSourceFiles(fileList)
-        }
-      }
     }
+
+    super.onActivityResult(requestCode, resultCode, data)
   }
 
   private fun finishWizard() {

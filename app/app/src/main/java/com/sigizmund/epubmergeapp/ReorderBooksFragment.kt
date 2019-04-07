@@ -68,6 +68,26 @@ class ReorderBooksFragment : Fragment() {
     }
   }
 
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    when (requestCode) {
+      FILE_SELECT_CODE -> {
+        if (data != null) {
+          val fileList = ArrayList<Uri>()
+          if (data.clipData != null) {
+            val clipData = data.clipData
+            for (i in 0 until clipData.itemCount) {
+              fileList.add(clipData.getItemAt(i).uri)
+            }
+          } else if (data.data != null) {
+            fileList.add(data.data)
+          }
+          model.addSourceFiles(fileList)
+        }
+      }
+    }
+    super.onActivityResult(requestCode, resultCode, data)
+  }
+
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
