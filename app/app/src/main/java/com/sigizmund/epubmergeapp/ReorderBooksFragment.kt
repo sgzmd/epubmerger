@@ -106,16 +106,20 @@ class ReorderBooksFragment : Fragment() {
     bookList.dragListener = onItemDragListener
     bookList.swipeListener = object: OnItemSwipeListener<BookEntry> {
       override fun onItemSwiped(position: Int, direction: OnItemSwipeListener.SwipeDirection, item: BookEntry) {
+        val entries = model.bookEntries?.value!!
         AlertDialog.Builder(this@ReorderBooksFragment.context!!)
           .setTitle("Remove book from the list?")
           .setMessage("Do you really want to remove ${item.title} from the list? This cannot be undone")
           .setIcon(android.R.drawable.ic_dialog_alert)
           .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
-            val list = ArrayList<BookEntry>(model.bookEntries?.value!!)
+            val list = ArrayList<BookEntry>(entries)
             list.removeAt(position)
             model?.bookEntries?.value = list
           })
-          .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->  })
+          .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->
+            model.bookEntries?.value = entries
+          })
+          .show()
       }
     }
 
