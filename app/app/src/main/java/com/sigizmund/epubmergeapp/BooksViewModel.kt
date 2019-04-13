@@ -58,7 +58,7 @@ open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : A
 
   var bookTitle: String
     get() {
-      if (_bookTitle == null) {
+      if (_bookTitle == null ) {
         return defaultTitle()
       } else {
         return _bookTitle!!
@@ -70,7 +70,7 @@ open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : A
 
   var bookAuthor: String
     get() {
-      if (_bookAuthor == null) {
+      if (_bookAuthor == null ) {
         return defaultAuthor()
       } else {
         return _bookAuthor!!
@@ -84,7 +84,7 @@ open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : A
   private fun defaultTitle(): String {
     val titles = bookEntries?.value?.map { it.title }
     return if (titles == null || titles.all { it.isBlank() }) {
-      "Sample Title"
+      "Default"
     } else {
       titles.filter { !it.isBlank() }.joinToString(", ")
     }
@@ -100,7 +100,7 @@ open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : A
         ?.toSet()
 
     return if (authors == null || authors.all { it.isBlank() }) {
-        "Sample Author"
+      "Default"
       } else {
         authors.filter { !it.isBlank() }.joinToString(", ")
       }

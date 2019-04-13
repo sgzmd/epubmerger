@@ -56,24 +56,17 @@ class BookMetaFragment : Fragment() {
     bookAuthor = view.findViewById(R.id.bookAuthor)
     bookTitle = view.findViewById(R.id.bookTitle)
 
-    bookAuthor.setText(model.bookAuthor)
-    bookTitle.setText(model.bookTitle)
-
-    model.bookEntries?.observe(this, Observer {
-      Log.d(TAG, "BookAuthor changed")
-      bookAuthor.setText(model.bookAuthor)
-      bookTitle.setText(model.bookTitle)
-    })
-
     bookAuthor.addTextChangedListener(object : TextWatcher {
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
       override fun afterTextChanged(s: Editable?) {
-        Log.d(TAG, "Book author has changed to ${s.toString()}, updating")
+        if (bookAuthor.tag == null) {
+          Log.d(TAG, "Book author has changed to ${s.toString()}, updating")
 
-        // This has side effect: now title is considered to be "set", so it won't
-        // be automatically updated when books are re-ordered
-        model.bookAuthor = s.toString()
+          // This has side effect: now title is considered to be "set", so it won't
+          // be automatically updated when books are re-ordered
+          model.bookAuthor = s.toString()
+        }
       }
     })
 
@@ -81,11 +74,29 @@ class BookMetaFragment : Fragment() {
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
       override fun afterTextChanged(s: Editable?) {
-        Log.d(TAG, "Book title was changed to ${bookTitle.text}, updating")
+        if (bookTitle.tag == null) {
+          Log.d(TAG, "Book title was changed to ${bookTitle.text}, updating")
 
-        model.bookTitle = s.toString()
+          model.bookTitle = s.toString()
+        }
       }
     })
+
+    model.bookEntries?.observe(this, Observer {
+      if (!model.bookEntries?.value?.isNullOrEmpty()!!) {
+        bookAuthor.tag = TAG
+        bookTitle.tag = TAG
+
+        bookAuthor.setText(model.bookAuthor)
+        bookTitle.setText(model.bookTitle)
+
+        bookAuthor.tag = null
+        bookTitle.tag = null
+      }
+    })
+
+    bookTitle.tag
+
 
     return view
   }
