@@ -20,3 +20,11 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     goals: 'test'
+- task: Gradle@2
+  inputs:
+    workingDirectory: 'app'
+    gradleWrapperFile: 'app/gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    testResultsFiles: '**/TEST-*.xml'
+    tasks: 'assembleDebug'    
