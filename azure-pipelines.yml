@@ -7,14 +7,16 @@ trigger:
 - master
 
 pool:
-  vmImage: 'macos-latest'
+  vmImage: 'ubuntu-latest'
 
 steps:
-- task: Gradle@2
+- task: Maven@3
   inputs:
-    workingDirectory: 'app'
-    gradleWrapperFile: 'app/gradlew'
-    gradleOptions: '-Xmx3072m'
+    mavenPomFile: 'epubmergelib/pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkArchitectureOption: 'x64'
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
-    tasks: 'assembleDebug'
+    goals: 'test'
