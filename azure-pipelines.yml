@@ -1,20 +1,17 @@
-# Android
-# Build your Android project with Gradle.
-# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/android
-
 trigger:
 - master
 
 pool:
-  vmImage: 'macos-latest'
+  vmImage: 'ubuntu-16.04'
 
 steps:
-- task: Gradle@2
+- task: Maven@3
   inputs:
-    workingDirectory: 'app'
-    gradleWrapperFile: 'app/gradlew'
-    gradleOptions: '-Xmx3072m'
+    mavenPomFile: 'epubmergelib/pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.11'
+    jdkArchitectureOption: 'x64'
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
-    tasks: 'assembleDebug'
+    goals: 'package'
