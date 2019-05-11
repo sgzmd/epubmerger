@@ -23,15 +23,7 @@ class BookMerger(var epubs: List<Book>) {
     addAllResources()
 
     epubs.forEachIndexed { index, epub ->
-      if (epub.tableOfContents != null && epub.tableOfContents.size() > 0) {
-        processTOC(epub, index)
-      } else {
-        // If there's no TOC in the book we have to just take
-        // items from spine and process one after another
-        epub.spine.spineReferences.forEach { spineReference ->
-          // TODO do something when there's no TOC
-        }
-      }
+      processTOC(epub, index)
 
       epub.spine.spineReferences.forEach {
         val key = index to it.resource.href
@@ -71,8 +63,14 @@ class BookMerger(var epubs: List<Book>) {
     val firstPage: EpubResource? = resources.get(index to firstPageResource.href)
     LOG.info("Using firstPage=${firstPage}")
     val topLevelTocReference = result.addSection(book.title, result.resources.getByHref(firstPage!!.newHref))
-    book.tableOfContents.tocReferences.forEach { tocReference ->
-      processTOCReference(index, tocReference, book, topLevelTocReference)
+
+    if (book.tableOfContents != null && book.tableOfContents.size() > 0) {
+      book.tableOfContents.tocReferences.forEach { tocReference ->
+        processTOCReference(index, tocReference, book, topLevelTocReference)
+      }
+    } else {
+      // We should process spine, but for now just having a TOC entry for the cover page
+      // or the first page of the book should be sufficient.
     }
   }
 

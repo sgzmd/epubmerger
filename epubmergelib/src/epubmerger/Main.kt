@@ -1,6 +1,8 @@
 package epubmerger
 
 import nl.siegmann.epublib.epub.EpubReader
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Paths
 
 fun main(args: Array<String>) {
@@ -10,6 +12,7 @@ fun main(args: Array<String>) {
   }
 
   val outputFileName = args[0]
+
   val fileNames = args.toList().drop(1)
 
   println(fileNames)

@@ -7,3 +7,5 @@ target
 
 idea-project
 .DS_Store
+test-nosubmit/
+test-result.epub

@@ -64,7 +64,7 @@ object ResourceProcessor {
 
         val href = FullHref(it.attr(attr))
         if (!book.resources.containsByHref(href.href)) {
-          LOG.info("In book ${book.title} there is href $href which cannot be found in the book")
+          LOG.info("In book ${book.title} there is href ${href.href} which cannot be found in the book")
           continue
         }
 
