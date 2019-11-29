@@ -37,8 +37,6 @@ fun main(args: Array<String>) {
     }
 
     ep.mergeBooks()
-
     ep.writeBook(Paths.get(output))
-
   }
 }
