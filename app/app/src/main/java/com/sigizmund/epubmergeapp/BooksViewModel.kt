@@ -1,7 +1,9 @@
 package com.sigizmund.epubmergeapp
 
 import android.app.Application
+import android.database.Cursor
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.lifecycle.*
 import nl.siegmann.epublib.epub.EpubReader
 import java.util.*
@@ -17,12 +19,39 @@ open class BooksViewModel(app: Application, var sourceFiles: ArrayList<Uri>) : A
   }
 
   fun addSourceFiles(files: ArrayList<Uri>) {
-    sourceFiles.addAll(files)
+
+    data class UriAndFileName(val uri: Uri, val fileName: String?)
+    val fileNames = files.map { UriAndFileName(it, uriToFileName(it)) }
+    val uris = fileNames.sortedBy { it.fileName }.map { it.uri }
+
+    sourceFiles.addAll(uris)
     internalBookEntries?.setValue(sourceFiles.map { createBookEntry(it) })
   }
 
+  fun uriToFileName(uri: Uri) : String? {
+    val contentResolver = getApplication<Application>().contentResolver
+    val cursor: Cursor =contentResolver.query(
+      uri, null, null, null, null)
+    var fileName: String? = null
+    try {
+      if (cursor != null && cursor.moveToFirst()) {
+        fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+      }
+    } finally {
+      cursor.close()
+    }
+
+    if (fileName != null) {
+      return fileName
+    }
+
+    return null
+  }
+
   open fun createBookEntry(it: Uri): BookEntry {
-    val istream = getApplication<Application>().contentResolver.openInputStream(it)
+    val contentResolver = getApplication<Application>().contentResolver
+
+    val istream = contentResolver.openInputStream(it)
     return BookEntry(EpubReader().readEpub(istream), it)
   }
 

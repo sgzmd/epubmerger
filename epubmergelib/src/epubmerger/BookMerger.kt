@@ -1,5 +1,6 @@
 package epubmerger
 
+import android.util.Log
 import nl.siegmann.epublib.domain.*
 import nl.siegmann.epublib.epub.EpubReader
 import nl.siegmann.epublib.epub.EpubWriter
@@ -78,6 +79,11 @@ class BookMerger(var epubs: List<Book>) {
     epubs.forEachIndexed { index, epub ->
       epub.resources.all.forEach { res ->
         val key = index to res.href
+
+        if (res.mediaType == null) {
+          LOG.warn("res.mediaType=null! %s", res.href)
+        }
+
         if (!TOC_TYPE.contains(res.mediaType.name)) {
           if (!resources.containsKey(key)) {
             val epubResource = ResourceProcessor.createEpubResource(res.href, res.id, index)
